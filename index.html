@@ -331,27 +331,65 @@ function makePhysicsWeb(cx, cy, radius) {
 
 function initWebs() {
   webs = [];
-  var count = 6 + Math.floor(Math.random() * 4);
-  var placed = [];
-  for (var i = 0; i < count; i++) {
-    var r = 50 + Math.random() * 70;
-    var tries = 0;
-    var x, y, ok;
-    do {
-      x = r + 20 + Math.random() * (W - r * 2 - 40);
-      y = r + 20 + Math.random() * (H - r * 2 - 40);
-      ok = true;
-      for (var j = 0; j < placed.length; j++) {
-        var dx = x - placed[j].x, dy = y - placed[j].y;
-        if (dx*dx + dy*dy < (r + placed[j].r + 40) * (r + placed[j].r + 40)) {
-          ok = false;
-          break;
-        }
+  var count = 8 + Math.floor(Math.random() * 4);
+
+  var midW = Math.min(660, W * 0.78);
+  var midX = (W - midW) / 2;
+  var midY = 60;
+  var midH = Math.min(H * 0.78, 660);
+
+  function overlapContent(cx, cy, r) {
+    var m = r + 35;
+    return cx + m > midX && cx - m < midX + midW &&
+           cy + m > midY && cy - m < midY + midH;
+  }
+
+  function overlapOther(cx, cy, r) {
+    for (var j = 0; j < webs.length; j++) {
+      var w = webs[j];
+      var dx = cx - w.cx, dy = cy - w.cy;
+      if (dx*dx + dy*dy < (r + w.radius + 45) * (r + w.radius + 45))
+        return true;
+    }
+    return false;
+  }
+
+  var topH = Math.max(0, midY - 30);
+  var botH = Math.max(0, H - midY - midH - 30);
+  var leftW = Math.max(0, midX - 30);
+  var rightW = Math.max(0, W - midX - midW - 30);
+
+  function pickEdge(r) {
+    var tries = 50;
+    while (tries--) {
+      var zone = Math.random();
+      var x, y;
+      if (zone < 0.30 && topH > r * 0.5) {
+        x = 20 + Math.random() * (W - 40);
+        y = 10 - r * 0.3 + Math.random() * topH;
+      } else if (zone < 0.50 && leftW > r * 0.5) {
+        x = 10 - r * 0.3 + Math.random() * leftW;
+        y = 20 + Math.random() * (H - 40);
+      } else if (zone < 0.70 && rightW > r * 0.5) {
+        x = midX + midW + 20 + Math.random() * (rightW + r * 0.3);
+        y = 20 + Math.random() * (H - 40);
+      } else if (botH > r * 0.5) {
+        x = 20 + Math.random() * (W - 40);
+        y = midY + midH + 20 + Math.random() * botH;
+      } else {
+        x = (midX + midW / 2) + (Math.random() - 0.5) * (W - 100);
+        y = (Math.random() < 0.5 ? -20 : H + 20) + (Math.random() - 0.5) * 100;
       }
-      tries++;
-    } while (!ok && tries < 50);
-    webs.push(makePhysicsWeb(x, y, r));
-    placed.push({ x: x, y: y, r: r });
+      if (!overlapContent(x, y, r) && !overlapOther(x, y, r))
+        return { x: x, y: y };
+    }
+    return null;
+  }
+
+  for (var i = 0; i < count * 5 && webs.length < count; i++) {
+    var r = 45 + Math.random() * 75;
+    var pos = pickEdge(r);
+    if (pos) webs.push(makePhysicsWeb(pos.x, pos.y, r));
   }
 }
 
