@@ -419,7 +419,8 @@ function updateSpiders() {
           if (r < 0.35) { sp.state = 'climb'; sp.targetLen = sp.threadLen * (0.3 + Math.random() * 0.3); sp.stateTimer = 1 + Math.random() * 1.5; }
           else if (r < 0.55) { sp.state = 'rappel'; sp.targetLen = Math.min(H * 0.88, sp.threadLen * (1.2 + Math.random() * 0.6)); sp.stateTimer = 1.5 + Math.random() * 2; }
           else if (r < 0.75) { sp.state = 'drift'; sp.targetLen = sp.threadLen; sp.stateTimer = 1 + Math.random() * 2; }
-          else sp.stateTimer = 2 + Math.random() * 4;
+          else if (r < 0.88) { sp.stateTimer = 2 + Math.random() * 4; }
+          else { sp.mode = 'crawl'; sp.state = 'wander'; sp.stateTimer = 3 + Math.random() * 4; sp.targetX = 30 + Math.random() * (W-60); sp.targetY = 30 + Math.random() * (H-60); }
         }
       }
       if (sp.state === 'climb') {
@@ -482,10 +483,14 @@ function updateSpiders() {
 
       if (sp.state === 'wander') {
         if (sp.stateTimer <= 0 || dist < 15) {
-          sp.targetX = 30 + Math.random() * (W - 60);
-          sp.targetY = 30 + Math.random() * (H - 60);
-          sp.stateTimer = 3 + Math.random() * 4;
-          sp.speed = 0.8 + Math.random() * 1.2;
+          if (Math.random() < 0.2) {
+            sp.mode = 'hang'; sp.anchorX = Math.max(10,Math.min(W-10,sp.x+(Math.random()-0.5)*60)); sp.anchorY = -5-Math.random()*10; sp.threadLen = Math.min(H*0.85, Math.max(30, sp.y - sp.anchorY + 5)); sp.angle = (Math.random()-0.5)*0.3; sp.state = 'swing'; sp.stateTimer = 2+Math.random()*4;
+          } else {
+            sp.targetX = 30 + Math.random() * (W - 60);
+            sp.targetY = 30 + Math.random() * (H - 60);
+            sp.stateTimer = 3 + Math.random() * 4;
+            sp.speed = 0.8 + Math.random() * 1.2;
+          }
         }
       }
 
