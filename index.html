@@ -262,44 +262,40 @@ document.addEventListener('mouseleave', function() {
   mouseActive = false;
 });
 
-/* ── 蛛网 ── */
+/* ── 八卦蛛网 ── */
 var webs = [];
 
 function initWebs() {
   webs = [];
-  // 角落蛛网
-  var corners = [
-    [0, 0, 1, 1], [W, 0, -1, 1],
-    [0, H, 1, -1], [W, H, -1, -1]
-  ];
-  // 选2-3个角落做网
-  var picked = corners.sort(function() { return Math.random() - 0.5; }).slice(0, 2 + Math.floor(Math.random() * 2));
-  picked.forEach(function(c) {
-    webs.push(makeWeb(c[0], c[1], c[2], c[3]));
-  });
-  // 再加1-2个边缘网
-  var edgeCount = 1 + Math.floor(Math.random() * 2);
-  for (var i = 0; i < edgeCount; i++) {
+  // 5-8 张网散布屏幕
+  var count = 5 + Math.floor(Math.random() * 4);
+  for (var i = 0; i < count; i++) {
+    var x, y, spread;
     if (Math.random() < 0.5) {
-      webs.push(makeWeb(Math.random() * W, 0, (Math.random()-0.5)*2, 1));
+      // 角落网
+      x = (Math.random() < 0.5 ? 0 : W);
+      y = (Math.random() < 0.5 ? 0 : H);
+      spread = 80 + Math.random() * 170;
     } else {
-      webs.push(makeWeb(Math.random() * W, H, (Math.random()-0.5)*2, -1));
+      // 中间网
+      x = 50 + Math.random() * (W - 100);
+      y = 50 + Math.random() * (H - 100);
+      spread = 60 + Math.random() * 130;
     }
+    webs.push(makeOctagonalWeb(x, y, spread));
   }
 }
 
-function makeWeb(ax, ay, dx, dy) {
-  var radials = 6 + Math.floor(Math.random() * 5);
+function makeOctagonalWeb(ax, ay, spread) {
   var rings = 4 + Math.floor(Math.random() * 3);
-  var spread = 60 + Math.random() * 150;
   var swayPhase = Math.random() * Math.PI * 2;
-  var swaySpeed = 0.15 + Math.random() * 0.25;
-  var radialAngles = [];
-  var baseAngle = Math.atan2(dy, dx) - 0.5 + Math.random() * 1.0;
-  for (var i = 0; i < radials; i++) {
-    radialAngles.push(baseAngle + (i / (radials - 1) - 0.5) * 1.0 + (Math.random() - 0.5) * 0.15);
+  var swaySpeed = 0.1 + Math.random() * 0.2;
+  // 8 条辐射线，均分 360 度
+  var radials = [];
+  for (var i = 0; i < 8; i++) {
+    radials.push((i / 8) * Math.PI * 2 + (Math.random() - 0.5) * 0.08);
   }
-  return { ax: ax, ay: ay, radials: radialAngles, rings: rings, spread: spread, swayPhase: swayPhase, swaySpeed: swaySpeed };
+  return { ax: ax, ay: ay, radials: radials, rings: rings, spread: spread, swayPhase: swayPhase, swaySpeed: swaySpeed };
 }
 
 function drawWebs(time) {
@@ -308,10 +304,10 @@ function drawWebs(time) {
     var cx = w.ax + sway;
     var cy = w.ay + sway * 0.5;
     var rad = w.radials;
-    var n = rad.length;
+    var n = 8;
     var alpha = 0.35 + Math.random() * 0.1;
 
-    // 辐射丝
+    // 8 条辐射丝
     ctx.strokeStyle = 'rgba(210,200,190,' + (alpha + 0.05) + ')';
     ctx.lineWidth = 1.2;
     for (var i = 0; i < n; i++) {
@@ -324,7 +320,7 @@ function drawWebs(time) {
       ctx.stroke();
     }
 
-    // 螺旋圈
+    // 八角形环（用 8 条直线连成八边形）
     ctx.strokeStyle = 'rgba(210,200,190,' + alpha + ')';
     ctx.lineWidth = 0.9;
     for (var ri = 1; ri <= w.rings; ri++) {
@@ -332,19 +328,20 @@ function drawWebs(time) {
       ctx.beginPath();
       for (var i = 0; i <= n; i++) {
         var idx = i % n;
-        var a = rad[idx] + sway * 0.001;
-        var px = cx + Math.cos(a) * (ringR + Math.sin(time * 0.3 + idx) * 1.5);
-        var py = cy + Math.sin(a) * (ringR + Math.cos(time * 0.3 + idx) * 1.5);
+        var a = rad[idx];
+        var px = cx + Math.cos(a) * ringR;
+        var py = cy + Math.sin(a) * ringR;
         if (i === 0) ctx.moveTo(px, py);
         else ctx.lineTo(px, py);
       }
+      ctx.closePath();
       ctx.stroke();
     }
 
-    // 散落丝
+    // 散落垂丝
     ctx.strokeStyle = 'rgba(210,200,190,' + (alpha * 0.6) + ')';
-    ctx.lineWidth = 0.7;
-    for (var i = 0; i < 4; i++) {
+    ctx.lineWidth = 0.6;
+    for (var i = 0; i < 3; i++) {
       var si = Math.floor(Math.random() * n);
       var sa = rad[si];
       var sx = cx + Math.cos(sa) * w.spread * (0.3 + Math.random() * 0.5);
@@ -389,6 +386,7 @@ function createSpider() {
     stateTimer: 2 + Math.random() * 5,
     windX: 0,
     speed: 0.5 + Math.random() * 1.5,
+    temper: Math.random() < 0.5 ? 'timid' : 'aggressive',
     bodyColor: pal.body,
     abdomenColor: pal.abdomen,
     legColor: pal.leg,
@@ -478,20 +476,21 @@ function updateSpiders() {
       }
     }
 
-    // ── 鼠标惊逃 ──
+    // ── 鼠标互动 ──
     if (mouseActive) {
       var mdx = sp.x - mouseX;
       var mdy = sp.y - mouseY;
       var mDist = Math.sqrt(mdx*mdx + mdy*mdy);
-      if (mDist < 180) {
+      if (sp.temper === 'timid' && mDist < 180) {
         sp.state = 'escape';
         sp.stateTimer = 0.8 + Math.random() * 0.5;
-        // 朝鼠标反方向荡
-        var escapeAngle = Math.atan2(mdy, mdx);
         if (sp.anchorY < 0) {
-          // 挂在顶上就快速收丝
           sp.targetLen = Math.max(30, sp.threadLen * 0.3);
         }
+      }
+      if (sp.temper === 'aggressive' && mDist < 300 && mDist > 30) {
+        sp.state = 'chase';
+        sp.stateTimer = 0.5;
       }
     }
 
@@ -503,6 +502,21 @@ function updateSpiders() {
       if (sp.stateTimer <= 0 || sp.threadLen < 40) {
         sp.state = 'swing';
         sp.stateTimer = 3 + Math.random() * 3;
+      }
+    }
+
+    if (sp.state === 'chase') {
+      // 朝鼠标方向放丝 + 摆荡
+      if (sp.threadLen < H * 0.8) sp.threadLen *= 1.02;
+      var chaseAngle = Math.atan2(mouseY - sp.y, mouseX - sp.x);
+      sp.angle += (chaseAngle - sp.angle) * 0.02;
+      sp.legPhase += 0.2;
+      sp.stateTimer -= 0.016;
+      if (sp.stateTimer <= 0 || mDist < 40 || !mouseActive) {
+        sp.state = 'swing';
+        sp.stateTimer = 1 + Math.random() * 2;
+      } else {
+        sp.stateTimer = 0.3;
       }
     }
 
