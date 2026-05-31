@@ -5,57 +5,220 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>盘丝洞 · 三书写作</title>
 <link rel="stylesheet" href="css/style.css">
+<style>
+/* Portal-specific styles */
+.portal-wrapper {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 60px 20px 80px;
+}
+
+.portal-header {
+  text-align: center;
+  margin-bottom: 50px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid var(--border);
+}
+
+.portal-header .book-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+.portal-header h1 {
+  font-family: var(--font-serif);
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: 8px;
+  color: var(--red);
+  margin-bottom: 8px;
+}
+
+.portal-header .subtitle {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-family: var(--font-sans);
+  letter-spacing: 4px;
+}
+
+.portal-header .hero-divider {
+  color: var(--red-dim);
+  font-size: 14px;
+  letter-spacing: 8px;
+  margin-top: 16px;
+}
+
+.portal-header .hero-desc {
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  margin-top: 12px;
+  line-height: 1.8;
+}
+
+.books {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.book-card {
+  display: flex;
+  align-items: stretch;
+  gap: 20px;
+  padding: 24px;
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.book-card:hover {
+  background: var(--bg-elevated);
+  border-color: var(--border-light);
+  transform: translateY(-2px);
+}
+
+.card-number {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  color: var(--gold-dim);
+  min-width: 40px;
+  text-align: center;
+  opacity: 0.6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-content {
+  flex: 1;
+}
+
+.card-content h2 {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+  letter-spacing: 2px;
+}
+
+.book-card:hover .card-content h2 {
+  color: var(--red);
+}
+
+.card-subtitle {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--gold-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.card-desc {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.7;
+  margin-bottom: 10px;
+}
+
+.card-link {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--red);
+  letter-spacing: 1px;
+  opacity: 0;
+  transition: all 0.3s;
+}
+
+.book-card:hover .card-link {
+  opacity: 1;
+}
+
+.portal-footer {
+  text-align: center;
+  padding: 40px 20px;
+  margin-top: 40px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+}
+
+.portal-footer .author { color: var(--gold-dim); }
+.portal-footer .meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  opacity: 0.6;
+}
+
+@media (max-width: 600px) {
+  .portal-wrapper { padding: 30px 16px 60px; }
+  .portal-header h1 { font-size: 30px; }
+  .book-card { padding: 18px; gap: 14px; }
+  .card-number { font-size: 22px; min-width: 30px; }
+  .card-content h2 { font-size: 18px; }
+}
+</style>
 </head>
 <body>
 
-<div class="bg-ornament"></div>
+<div class="portal-wrapper">
+  <div class="portal-header">
+    <div class="book-icon">🕸</div>
+    <h1>盘丝洞</h1>
+    <p class="subtitle">PANSI CAVE · 三书写作中枢</p>
+    <div class="hero-divider">◈ ◈ ◈</div>
+    <p class="hero-desc">
+      盘丝墨痕的 AI 辅助小说系统<br>
+      三本书 · 统一主题 · 自动部署
+    </p>
+  </div>
 
-<header class="hero">
-  <div class="hero-icon">🕸</div>
-  <h1>盘丝洞</h1>
-  <p class="hero-sub">PANSI CAVE · 三书写作中枢</p>
-  <div class="hero-divider">◈ ◈ ◈</div>
-  <p class="hero-desc">
-    诩墨的 AI 辅助小说写作系统。<br>
-    三本书 · 每天九次写作 · 自动部署
-  </p>
-</header>
+  <div class="books">
+    <a href="xunxui/" class="book-card">
+      <div class="card-number">壹</div>
+      <div class="card-content">
+        <h2>驯蕊</h2>
+        <p class="card-subtitle">XunRui · 心理救赎</p>
+        <p class="card-desc">两个人的相遇，是从一把反了的锁开始的。槐序与蕊，在绳索与信任之间，寻找彼此的边界。</p>
+        <span class="card-link">阅读 →</span>
+      </div>
+    </a>
 
-<main class="books">
-  <a href="https://xumo-git.github.io/XunXui" class="book-card" style="--card-accent: #8b2332;">
-    <div class="card-number">壹</div>
-    <div class="card-content">
-      <h2>驯蕊</h2>
-      <p class="card-subtitle">XunRui · 心理救赎</p>
-      <p class="card-desc">两个人的相遇，是从一把反了的锁开始的。槐序与蕊，在绳索与信任之间，寻找彼此的边界。</p>
-      <span class="card-link">阅读 →</span>
-    </div>
-  </a>
+    <a href="yuantiang/" class="book-card">
+      <div class="card-number">贰</div>
+      <div class="card-content">
+        <h2>我真是袁天罡</h2>
+        <p class="card-subtitle">I Am Yuan Tiangang · 底层爬升</p>
+        <p class="card-desc">一个灵魂穿越千年，从深圳白石洲的天桥开始，重新活一次。真与假之间，他选择做自己。</p>
+        <span class="card-link">阅读 →</span>
+      </div>
+    </a>
 
-  <a href="https://xumo-git.github.io/WZS_YuanTiangan" class="book-card" style="--card-accent: #c9a96e;">
-    <div class="card-number">贰</div>
-    <div class="card-content">
-      <h2>我真是袁天罡</h2>
-      <p class="card-subtitle">I Am Yuan Tiangang · 底层爬升</p>
-      <p class="card-desc">一个灵魂穿越千年，从深圳白石洲的天桥开始，重新活一次。真与假之间，他选择做自己。</p>
-      <span class="card-link">阅读 →</span>
-    </div>
-  </a>
+    <a href="tianming59/" class="book-card">
+      <div class="card-number">叁</div>
+      <div class="card-content">
+        <h2>天命五九</h2>
+        <p class="card-subtitle">59th Year of Destiny · 杏林春暖</p>
+        <p class="card-desc">五十九岁那年，倪海先生走进了一座山。再出来时，世界已经不认识他了。一个过期的人，一张过期的证件，走在一条他完全不认识的路上。</p>
+        <span class="card-link">阅读 →</span>
+      </div>
+    </a>
+  </div>
+</div>
 
-  <a href="https://xumo-git.github.io/TianMing59" class="book-card" style="--card-accent: #c23b22;">
-    <div class="card-number">叁</div>
-    <div class="card-content">
-      <h2>天命五九</h2>
-      <p class="card-subtitle">59th Year of Destiny · 杏林春暖</p>
-      <p class="card-desc">五十九岁那年，倪海先生走进了一座山。再出来时，世界已经不认识他了。一个过期的人，一张过期的证件，走在一条他完全不认识的路上。</p>
-      <span class="card-link">阅读 →</span>
-    </div>
-  </a>
-</main>
-
-<footer class="footer">
+<footer class="portal-footer">
   <p><span class="author">盘丝墨痕</span> · 2026</p>
-  <p class="footer-meta">Powered by Hermes · OpenCode · AI 辅助写作</p>
+  <p class="meta">Powered by Hermes · OpenCode · AI 辅助写作</p>
 </footer>
 
 </body>

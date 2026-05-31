@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>不请自来 · 驯蕊</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div id="reading-progress"></div>
+
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="index.html">← 目录</a>
+    <span class="nav-title">驯蕊</span>
+    <div class="reading-controls">
+      <button id="font-dec" title="减小字号">A−</button>
+      <span class="font-size-label" id="font-label">18</span>
+      <button id="font-inc" title="增大字号">A+</button>
+    </div>
+  </div>
+</nav>
+
+<div class="chapter-wrapper">
+  <div class="chapter-title">
+    <div class="ch-label">— 序章 —</div>
+    <h1>不请自来</h1>
+  </div>
+
+  <div class="chapter-content">
+<p>
+槐序在深夜刷到一个帖。
+</p>
+<p>
+他很少刷帖。圈里的东西翻来覆去就那么些内容——露骨的自拍、空洞的求主、千篇一律的炫耀帖。他通常扫一眼就划过去了。
+</p>
+<p>
+但这张照片让他停了。
+</p>
+<p>
+构图很冷静。没有露脸，没有背景信息，没有那些刻意的暧昧光影。就是一个贞操锁的特写——锁在一个人身上，金属的冷灰色衬着偏白的皮肤。
+</p>
+<p>
+但锁反了。金属片的边缘卡在肉上，硅胶带拧了半圈，勒出来的印痕方向不对。
+</p>
+<p><strong>这是一个自己给自己上锁的人。</strong></p>
+<p>
+自己买的锁，自己对着镜子摸索着戴上去的，没有人帮她把那根带子捋顺。她甚至可能不知道戴反了——或者她知道，但没人在乎。
+</p>
+<p>
+槐序放大了那张照片。锁具的型号是常见款，塑料扣件上有几道划痕，说明用过一段时间了。皮肤的状态很好——细腻，毛孔几乎看不见，锁的边缘压出来的红痕像一笔工笔画。
+</p>
+<p>
+他点开对方的资料。ID是一串乱码，资料空白，没有动态。
+</p>
+<p>
+一个 Ghost。
+</p>
+<p>
+他打字。
+</p>
+<p><strong>「锁反了。重锁，拍照，发我。」</strong></p>
+<p>
+发送。他把手机放到桌上，倒了一杯水。
+</p>
+<p>
+三分钟。回复来了。
+</p>
+<p>
+一张新照片。同一把锁，同一个身体——这次锁正了。硅胶带平整地贴合皮肤，锁具居中，不偏不倚。但他注意到另一个细节：她紧得太过了。硅胶边缘在大腿根部勒出一道比刚才更深的印痕，像是不小心用力拉过了头。
+</p>
+<p>
+他回了一个字。
+</p>
+<p><strong>「乖。」</strong></p>
+<p>
+没有回复。但他知道她会回来的。
+</p>
+<hr>
+<p>
+凌晨一点四十二分。
+</p>
+<p>
+槐序关掉床头灯，在黑暗里躺了一会儿。他没有在想那张照片——他在想那个人的手。自己给自己上锁的时候，那双手在做什么样的动作：左手扶着锁体，右手拉紧束带，低头检查位置。
+</p>
+<p>
+那是她自己一个人的仪式。
+</p>
+<p>
+从今晚开始，不是了。
+</p>
+<p>
+（序章完）
+</p>
+  </div>
+
+  <div class="chapter-end">
+    <span class="end-ornament">✦ ✦ ✦</span>
+    驯蕊 · 序章
+  </div>
+
+  <nav class="chapter-nav">
+    <div class="nav-left">
+      <span></span>
+    </div>
+    <div class="nav-center">
+      <a href="index.html">☰ 目录</a>
+    </div>
+    <div class="nav-right">
+      <a href="chapter-1.html">交出去 →</a>
+    </div>
+  </nav>
+</div>
+
+<div id="tts-bar">
+  <div class="tts-inner">
+    <button id="tts-play">▶ 朗读本章</button>
+    <button id="tts-pause" style="display:none;">⏸ 暂停</button>
+    <button id="tts-stop" style="display:none;">⏹ 停止</button>
+    <select id="tts-rate">
+      <option value="0.8">慢速</option>
+      <option value="1" selected>正常</option>
+      <option value="1.2">快速</option>
+    </select>
+  </div>
+</div>
+
+<footer class="site-footer"><span class="author">驯蕊</span> · 盘丝墨痕</footer>
+
+<script>
+(function(){
+var h=document.documentElement;
+window.addEventListener('scroll',function(){
+var p=(h.scrollTop-h.clientTop)/(h.scrollHeight-h.clientHeight)*100;
+document.getElementById('reading-progress').style.width=Math.min(p,100)+'%';
+});
+var sz=18,content=document.querySelector('.chapter-content'),label=document.getElementById('font-label');
+document.getElementById('font-inc').addEventListener('click',function(){if(sz<24){sz+=1;content.style.fontSize=sz+'px';label.textContent=sz;}});
+document.getElementById('font-dec').addEventListener('click',function(){if(sz>14){sz-=1;content.style.fontSize=sz+'px';label.textContent=sz;}});
+var bar=document.getElementById('tts-bar'),playBtn=document.getElementById('tts-play'),pauseBtn=document.getElementById('tts-pause'),stopBtn=document.getElementById('tts-stop'),rateSelect=document.getElementById('tts-rate'),utt=null,paused=false;
+function getText(){var c=(document.querySelector('.chapter-content')||document.body).cloneNode(true);c.querySelectorAll('script,style,button,select,#tts-bar,.chapter-nav,.chapter-end,.site-footer').forEach(function(e){e.remove()});var t=(c.textContent||'').replace(/\s+/g,' ').trim();return t.length>50000?t.slice(0,50000):t;}
+function speak(){
+if(utt)window.speechSynthesis.cancel();
+utt=new SpeechSynthesisUtterance(getText());
+utt.lang='zh-CN';utt.rate=parseFloat(rateSelect.value);
+var v=window.speechSynthesis.getVoices(),zv=v.find(function(x){return x.lang.startsWith('zh')});
+if(zv)utt.voice=zv;
+utt.onstart=function(){playBtn.style.display='none';pauseBtn.style.display='inline-block';stopBtn.style.display='inline-block';};
+utt.onend=function(){playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';utt=null;};
+utt.onerror=function(){playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';};
+window.speechSynthesis.speak(utt);
+}
+playBtn.addEventListener('click',function(){if(paused&&utt){window.speechSynthesis.resume();paused=false;playBtn.style.display='none';pauseBtn.style.display='inline-block';return;}speak();});
+pauseBtn.addEventListener('click',function(){window.speechSynthesis.pause();paused=true;pauseBtn.style.display='none';playBtn.style.display='inline-block';playBtn.textContent='▶ 继续';});
+stopBtn.addEventListener('click',function(){window.speechSynthesis.cancel();utt=null;paused=false;playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';});
+bar.style.display='block';
+})();
+</script>
+
+</body>
+</html>

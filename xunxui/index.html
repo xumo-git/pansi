@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>驯蕊 · 盘丝墨痕</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div class="toc-wrapper">
+  <div class="toc-header">
+    <div class="book-icon"><span class="chinese-ornament">◈</span></div>
+    <h1>驯蕊</h1>
+    <div class="subtitle">三书救赎 · 心理救赎篇</div>
+    <div class="subtitle-en">Taming the Heart</div>
+    <div class="divider"><span class="divider-text">盘丝墨痕</span></div>
+    <div class="book-stats">
+      <span>📖 <span class="stat-num">16</span> 章</span>
+      <span>✍️ <span class="stat-num">盘丝墨痕</span> 著</span>
+    </div>
+  </div>
+
+  <ul class="chapter-list" id="chapter-list">
+  </ul>
+</div>
+
+<footer class="site-footer"><span class="author">盘丝墨痕</span> · 驯蕊</footer>
+
+<script>
+var chapters = [
+  ["序章", "不请自来", "chapter-0.html"],
+  ["第01章", "交出去", "chapter-1.html"],
+  ["第02章", "嘴巴", "chapter-2.html"],
+  ["第03章", "蜡", "chapter-3.html"],
+  ["第04章", "绳子", "chapter-4.html"],
+  ["第05章", "训", "chapter-5.html"],
+  ["第06章", "满", "chapter-6.html"],
+  ["第07章", "融", "chapter-7.html"],
+  ["第08章", "循", "chapter-8.html"],
+  ["第09章", "涨", "chapter-9.html"],
+  ["第10章", "惯", "chapter-10.html"],
+  ["第11章", "悬", "chapter-11.html"],
+  ["第12章", "撤", "chapter-12.html"],
+  ["第13章", "敞", "chapter-13.html"],
+  ["第14章", "解", "chapter-14.html"],
+  ["第15章", "隙", "chapter-15.html"]
+];
+
+var list = document.getElementById('chapter-list');
+chapters.forEach(function(ch) {
+  var label = ch[0], title = ch[1], file = ch[2];
+  var li = document.createElement('li');
+  li.style.listStyle = 'none';
+  li.innerHTML = '<a href="' + file + '" class="chapter-item">' +
+    '<span class="ch-number">' + label + '</span>' +
+    '<span class="ch-title">' + title + '</span>' +
+    '<span class="ch-arrow">→</span></a>';
+  list.appendChild(li);
+});
+</script>
+
+</body>
+</html>

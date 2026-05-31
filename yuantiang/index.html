@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>我真是袁天罡 · 盘丝墨痕</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div class="toc-wrapper">
+  <div class="toc-header">
+    <div class="book-icon"><span class="chinese-ornament">◈</span></div>
+    <h1>我真是袁天罡</h1>
+    <div class="subtitle">穿越古今 · 深圳漂流</div>
+    <div class="subtitle-en">I Am Yuan Tiangan</div>
+    <div class="divider"><span class="divider-text">盘丝墨痕</span></div>
+    <div class="book-stats">
+      <span>📖 <span class="stat-num">8</span> 章</span>
+      <span>✍️ <span class="stat-num">盘丝墨痕</span> 著</span>
+    </div>
+  </div>
+
+  <ul class="chapter-list" id="chapter-list">
+  </ul>
+</div>
+
+<footer class="site-footer"><span class="author">盘丝墨痕</span> · 我真是袁天罡</footer>
+
+<script>
+var chapters = [
+  ["第01章", "醒来", "ch01.html"],
+  ["第02章", "唐人的第一课", "ch02.html"],
+  ["第03章", "白石洲漫游", "ch03.html"],
+  ["第04章", "竹子林的路", "ch04.html"],
+  ["第05章", "第一单生意", "ch05.html"],
+  ["第06章", "天桥", "ch06.html"],
+  ["第07章", "摆摊搭子", "ch07.html"],
+  ["第08章", "天桥规矩", "ch08.html"]
+];
+
+var list = document.getElementById('chapter-list');
+chapters.forEach(function(ch) {
+  var label = ch[0], title = ch[1], file = ch[2];
+  var li = document.createElement('li');
+  li.style.listStyle = 'none';
+  li.innerHTML = '<a href="' + file + '" class="chapter-item">' +
+    '<span class="ch-number">' + label + '</span>' +
+    '<span class="ch-title">' + title + '</span>' +
+    '<span class="ch-arrow">→</span></a>';
+  list.appendChild(li);
+});
+</script>
+
+</body>
+</html>
