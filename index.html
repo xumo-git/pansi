@@ -299,15 +299,18 @@ function drawThreads(time) {
   });
 }
 
-/* ── 蜘蛛 ── */
+/* ── 蜘蛛（悬挂荡丝） ── */
 var spider = {
-  x: 0, y: 0,
-  targetX: 0, targetY: 0,
   size: 1,
   phase: 0,
   legPhase: 0,
-  state: 'walk',
+  anchorX: 0, anchorY: 0,
+  threadLen: 0,
+  angle: 0,
+  targetLen: 0,
+  state: 'swing',
   stateTimer: 0,
+  windX: 0,
   bodyColor: '#c23b22',
   abdomenColor: '#8a2a18',
   legColor: '#a63322',
@@ -315,13 +318,15 @@ var spider = {
 };
 
 function initSpider() {
-  spider.x = W * (0.3 + Math.random() * 0.4);
-  spider.y = H * 0.2;
-  spider.targetX = W * (0.2 + Math.random() * 0.6);
-  spider.targetY = H * 0.7;
+  spider.anchorX = W * (0.2 + Math.random() * 0.6);
+  spider.anchorY = -10;
+  spider.threadLen = H * (0.4 + Math.random() * 0.3);
+  spider.angle = (Math.random() - 0.5) * 0.4;
+  spider.targetLen = spider.threadLen;
   spider.phase = Math.random() * 100;
-  spider.state = 'walk';
-  spider.stateTimer = 3 + Math.random() * 2;
+  spider.state = 'swing';
+  spider.stateTimer = 3 + Math.random() * 4;
+  spider.windX = 0;
   var r = Math.random();
   if (r < 0.3) {
     spider.bodyColor = '#c23b22'; spider.abdomenColor = '#8a2a18';
@@ -336,35 +341,67 @@ function initSpider() {
 }
 
 function updateSpider() {
-  var dx = spider.targetX - spider.x;
-  var dy = spider.targetY - spider.y;
-  var dist = Math.sqrt(dx*dx + dy*dy);
+  var t = Date.now() * 0.001;
   spider.stateTimer -= 0.016;
 
-  if (spider.state === 'idle') {
+  // 风
+  spider.windX = Math.sin(t * 0.15 + spider.phase) * 5 + Math.sin(t * 0.3 + spider.phase * 1.3) * 2;
+
+  // 摆锤运动（带阻尼和风力）
+  var gravity = 0.003;
+  var damping = 0.998;
+  var windForce = Math.sin(t * 0.2 + spider.phase) * 0.00008;
+  var angVel = (spider.angle - Math.sin(t * 0.3 + spider.phase) * 0.2) || 0;
+  var accel = -gravity * Math.sin(spider.angle) / (spider.threadLen * 0.01 + 1) + windForce;
+  spider.angle = spider.angle * damping + accel - Math.sin(spider.angle) * 0.0005;
+
+  // 状态切换
+  if (spider.state === 'swing') {
     if (spider.stateTimer <= 0) {
-      spider.state = 'walk';
-      spider.targetX = 30 + Math.random() * (W - 60);
-      spider.targetY = 30 + Math.random() * (H - 60);
-      spider.stateTimer = 4 + Math.random() * 4;
+      if (Math.random() < 0.4) {
+        spider.state = 'climb';
+        spider.targetLen = spider.threadLen * (0.4 + Math.random() * 0.3);
+        spider.stateTimer = 1.5 + Math.random() * 1.5;
+      } else if (Math.random() < 0.3) {
+        spider.state = 'rappel';
+        spider.targetLen = Math.min(H * 0.85, spider.threadLen * (1.2 + Math.random() * 0.5));
+        spider.stateTimer = 2 + Math.random() * 2;
+      } else {
+        spider.stateTimer = 2 + Math.random() * 3;
+      }
     }
   }
 
-  if (spider.state === 'walk') {
-    if (dist > 5) {
-      var speed = Math.min(1 + spider.size * 0.3, dist);
-      spider.x += (dx / dist) * speed;
-      spider.y += (dy / dist) * speed;
-      spider.legPhase += 0.08;
-      if (spider.stateTimer <= 0 || dist < 10) {
-        spider.state = 'idle';
-        spider.stateTimer = 2 + Math.random() * 5;
-      }
+  if (spider.state === 'climb') {
+    if (Math.abs(spider.threadLen - spider.targetLen) > 2) {
+      spider.threadLen -= 1.5;
+      spider.legPhase += 0.1;
     } else {
-      spider.state = 'idle';
-      spider.stateTimer = 2 + Math.random() * 5;
+      spider.state = 'swing';
+      spider.stateTimer = 2 + Math.random() * 4;
     }
   }
+
+  if (spider.state === 'rappel') {
+    if (Math.abs(spider.threadLen - spider.targetLen) > 2) {
+      spider.threadLen += 2.5;
+      spider.legPhase += 0.05;
+    } else {
+      spider.state = 'swing';
+      spider.stateTimer = 2 + Math.random() * 4;
+    }
+  }
+
+  // 随机移动锚点（漂移）
+  if (Math.random() < 0.005) {
+    spider.anchorX += (Math.random() - 0.5) * 100;
+    spider.anchorX = Math.max(20, Math.min(W - 20, spider.anchorX));
+  }
+
+  // 计算蜘蛛位置
+  spider.x = spider.anchorX + Math.sin(spider.angle) * spider.threadLen + spider.windX;
+  spider.y = spider.anchorY + Math.cos(spider.angle) * spider.threadLen;
+  if (spider.y < 20) spider.y = 20;
 }
 
 function drawSpider(time) {
@@ -373,16 +410,32 @@ function drawSpider(time) {
   var t = time;
   var seed = spider.phase;
 
-  // 身体朝向运动方向
-  var dx = spider.targetX - spider.x;
-  var dy = spider.targetY - spider.y;
-  var angle = Math.atan2(dy, dx);
-  var moving = (dx*dx + dy*dy) > 100;
+  // ── 蛛丝 ──
+  var sx = spider.anchorX + Math.sin(spider.angle) * spider.threadLen * 0.15;
+  var sy = spider.anchorY + 5;
+  ctx.strokeStyle = 'rgba(200,190,180,0.15)';
+  ctx.lineWidth = 0.6;
+  ctx.beginPath();
+  ctx.moveTo(spider.anchorX, spider.anchorY);
+  // 用贝塞尔让丝微微弯曲
+  var midX = (spider.anchorX + x) / 2 + Math.sin(t * 0.5 + seed) * 10;
+  var midY = (spider.anchorY + y) / 2 - 10;
+  ctx.quadraticCurveTo(midX, midY, x, y - s * 0.2);
+  ctx.stroke();
+
+  // 丝的反光
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.lineWidth = 0.3;
+  ctx.beginPath();
+  ctx.moveTo(spider.anchorX + 1, spider.anchorY + 1);
+  ctx.quadraticCurveTo(midX + 2, midY + 2, x + 2, y - s * 0.2 + 1);
+  ctx.stroke();
 
   ctx.save();
   ctx.translate(x, y);
-  if (moving) ctx.rotate(angle + Math.PI/2);
-  else ctx.rotate(Math.sin(t * 0.3 + seed) * 0.05);
+  // 悬挂姿态：头朝上，腹朝下，随摆角微倾
+  var tilt = spider.angle * 0.3 + Math.sin(t * 0.5 + seed) * 0.03;
+  ctx.rotate(Math.PI + tilt);
 
   // ── 腹部绒毛底层（营造毛茸茸轮廓） ──
   ctx.strokeStyle = 'rgba(200,190,180,0.06)';
@@ -752,6 +805,9 @@ requestAnimationFrame(loop);
 window.addEventListener('resize', function() {
   setTimeout(function() {
     initThreads();
+    spider.anchorX = W * (0.2 + Math.random() * 0.6);
+    spider.threadLen = H * (0.4 + Math.random() * 0.3);
+    if (spider.y > H * 0.9) spider.threadLen = H * 0.5;
   }, 200);
 });
 
