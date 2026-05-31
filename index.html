@@ -331,11 +331,27 @@ function makePhysicsWeb(cx, cy, radius) {
 
 function initWebs() {
   webs = [];
-  for (var i = 0; i < 4; i++) {
-    var x = 80 + Math.random() * (W - 160);
-    var y = 80 + Math.random() * (H - 160);
-    var r = 60 + Math.random() * 80;
+  var count = 6 + Math.floor(Math.random() * 4);
+  var placed = [];
+  for (var i = 0; i < count; i++) {
+    var r = 50 + Math.random() * 70;
+    var tries = 0;
+    var x, y, ok;
+    do {
+      x = r + 20 + Math.random() * (W - r * 2 - 40);
+      y = r + 20 + Math.random() * (H - r * 2 - 40);
+      ok = true;
+      for (var j = 0; j < placed.length; j++) {
+        var dx = x - placed[j].x, dy = y - placed[j].y;
+        if (dx*dx + dy*dy < (r + placed[j].r + 40) * (r + placed[j].r + 40)) {
+          ok = false;
+          break;
+        }
+      }
+      tries++;
+    } while (!ok && tries < 50);
     webs.push(makePhysicsWeb(x, y, r));
+    placed.push({ x: x, y: y, r: r });
   }
 }
 
