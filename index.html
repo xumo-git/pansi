@@ -371,6 +371,7 @@ function drawSpider(time) {
   var x = spider.x, y = spider.y;
   var s = 18 + spider.size * 3;
   var t = time;
+  var seed = spider.phase;
 
   // 身体朝向运动方向
   var dx = spider.targetX - spider.x;
@@ -381,216 +382,266 @@ function drawSpider(time) {
   ctx.save();
   ctx.translate(x, y);
   if (moving) ctx.rotate(angle + Math.PI/2);
-  else ctx.rotate(Math.sin(t * 0.3 + spider.phase) * 0.05);
+  else ctx.rotate(Math.sin(t * 0.3 + seed) * 0.05);
 
-  // ===== 腿 =====
-  // 8条腿：4左4右，从身体两侧伸出
-  // 每段腿：基节→转节→股节→胫节→跗节 (coxa→trochanter→femur→tibia→tarsus)
-  ctx.strokeStyle = spider.legColor;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-
-  var legSwing = Math.sin(spider.legPhase) * 0.25;
-
-  for (var side = -1; side <= 1; side += 2) {
-    for (var li = 0; li < 4; li++) {
-      // 每条腿的位置沿身体纵向分布
-      var legPos = (li / 3 - 0.5) * 1.1;
-      var baseY = legPos * s * 0.6;
-
-      // 各段长度
-      var len1 = s * (0.8 + li * 0.15);  // 股节
-      var len2 = s * (1.0 + li * 0.12);  // 胫节
-      var len3 = s * (0.7 - li * 0.05);  // 跗节
-
-      // 关节角度
-      var ang1 = side * (0.5 + li * 0.08 + legSwing * 0.5);
-      var ang2 = side * (0.7 + legSwing * 0.3 + Math.sin(t * 0.5 + li + spider.phase) * 0.08);
-      var ang3 = side * (1.0 + legSwing * 0.2 + Math.sin(t * 0.4 + li * 0.5 + spider.phase) * 0.1);
-
-      // 基节（短）
-      var coxa = side * s * 0.35;
-
-      // 股节
-      var j1x = coxa + Math.cos(ang1) * len1;
-      var j1y = baseY + Math.sin(ang1) * len1 * 0.3;
-
-      // 胫节
-      var j2x = j1x + Math.cos(ang1 + ang2) * len2;
-      var j2y = j1y + Math.sin(ang1 + ang2) * len2;
-
-      // 跗节（末端）
-      var j3x = j2x + Math.cos(ang1 + ang2 + ang3) * len3 * 0.5;
-      var j3y = j2y + Math.sin(ang1 + ang2 + ang3) * len3 * 0.5;
-      var ex = j2x + Math.cos(ang1 + ang2 + ang3) * len3;
-      var ey = j2y + Math.sin(ang1 + ang2 + ang3) * len3;
-
-      // 各段宽度递减
-      ctx.lineWidth = (1.8 - li * 0.15);
-
-      // 股节
-      ctx.beginPath();
-      ctx.moveTo(coxa, baseY);
-      ctx.lineTo(j1x, j1y);
-      ctx.stroke();
-
-      // 胫节
-      ctx.lineWidth = (1.4 - li * 0.12);
-      ctx.beginPath();
-      ctx.moveTo(j1x, j1y);
-      ctx.lineTo(j2x, j2y);
-      ctx.stroke();
-
-      // 跗节（更细）
-      ctx.lineWidth = (0.8 - li * 0.06);
-      ctx.beginPath();
-      ctx.moveTo(j2x, j2y);
-      ctx.lineTo(ex, ey);
-      ctx.stroke();
-
-      // 腿毛
-      var hairCount = 4 + li * 2;
-      var hairLen = s * (0.06 + li * 0.02);
-      ctx.strokeStyle = 'rgba(200,190,180,0.25)';
-      ctx.lineWidth = 0.4;
-      // 股节毛
-      for (var h = 0; h < hairCount; h++) {
-        var frac = h / hairCount;
-        var hx = coxa + (j1x - coxa) * frac;
-        var hy = baseY + (j1y - baseY) * frac;
-        var hairAngle = ang1 + (h % 2 === 0 ? 1.2 : -1.2) + Math.sin(t + h) * 0.2;
-        ctx.beginPath();
-        ctx.moveTo(hx, hy);
-        ctx.lineTo(hx + Math.cos(hairAngle) * hairLen, hy + Math.sin(hairAngle) * hairLen);
-        ctx.stroke();
-      }
-      // 胫节毛
-      ctx.strokeStyle = 'rgba(200,190,180,0.2)';
-      for (var h = 0; h < hairCount; h++) {
-        var frac = h / hairCount;
-        var hx = j1x + (j2x - j1x) * frac;
-        var hy = j1y + (j2y - j1y) * frac;
-        var hairAngle = ang1 + ang2 + (h % 2 === 0 ? 1.5 : -1.5) + Math.sin(t * 0.5 + h) * 0.3;
-        ctx.beginPath();
-        ctx.moveTo(hx, hy);
-        ctx.lineTo(hx + Math.cos(hairAngle) * hairLen * 0.8, hy + Math.sin(hairAngle) * hairLen * 0.8);
-        ctx.stroke();
-      }
-
-      // 关节小点
-      ctx.fillStyle = spider.legColor;
-      ctx.globalAlpha = 0.4;
-      ctx.beginPath();
-      ctx.arc(j1x, j1y, 1.2, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(j2x, j2y, 0.8, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.globalAlpha = 1;
-    }
+  // ── 腹部绒毛底层（营造毛茸茸轮廓） ──
+  ctx.strokeStyle = 'rgba(200,190,180,0.06)';
+  ctx.lineWidth = 0.6;
+  for (var f = 0; f < 120; f++) {
+    var fa = Math.random() * Math.PI * 2;
+    var fd = 0.7 + Math.random() * 0.3;
+    var fx = Math.cos(fa) * s * 0.65 * fd;
+    var fy = s * 0.5 + Math.sin(fa) * s * 0.8 * fd;
+    var fl = s * (0.06 + Math.random() * 0.12);
+    var fang = Math.atan2(Math.sin(fa) * 0.8, Math.cos(fa)) + (Math.random() - 0.5) * 0.8;
+    ctx.beginPath();
+    ctx.moveTo(fx, fy);
+    ctx.lineTo(fx + Math.cos(fang) * fl, fy + Math.sin(fang) * fl);
+    ctx.stroke();
   }
 
-  // ===== 身体投影（增加立体感） =====
-  ctx.fillStyle = 'rgba(0,0,0,0.2)';
+  // ── 腹部（大屁股） ──
+  // 用不规则路径比椭圆更真实
   ctx.beginPath();
-  ctx.ellipse(0, s * 0.8, s * 0.7, s * 0.3, 0.2, 0, Math.PI * 2);
-  ctx.fill();
-
-  // ===== 腹部（大屁股） =====
-  var grad = ctx.createRadialGradient(-s*0.1, s*0.5, 0, 0, s*0.5, s*0.8);
-  grad.addColorStop(0, lighten(spider.abdomenColor, 20));
-  grad.addColorStop(0.7, spider.abdomenColor);
-  grad.addColorStop(1, darken(spider.abdomenColor, 30));
+  var aPts = 20;
+  for (var i = 0; i <= aPts; i++) {
+    var ang = (i / aPts) * Math.PI * 2;
+    var rx = s * 0.62 + Math.sin(ang * 3 + seed) * s * 0.03;
+    var ry = s * 0.78 + Math.sin(ang * 4 + seed * 1.3) * s * 0.03;
+    var px = Math.cos(ang) * rx;
+    var py = s * 0.5 + Math.sin(ang) * ry;
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+  var grad = ctx.createRadialGradient(-s*0.1, s*0.4, 0, 0, s*0.5, s*0.8);
+  grad.addColorStop(0, lighten(spider.abdomenColor, 25));
+  grad.addColorStop(0.5, spider.abdomenColor);
+  grad.addColorStop(1, darken(spider.abdomenColor, 35));
   ctx.fillStyle = grad;
-  ctx.beginPath();
-  ctx.ellipse(0, s * 0.5, s * 0.65, s * 0.8, 0, 0, Math.PI * 2);
   ctx.fill();
 
   // 腹部花纹
   ctx.fillStyle = spider.markColor;
-  // 两条白色斑纹
   ctx.beginPath();
-  ctx.ellipse(-s*0.2, s*0.35, s*0.15, s*0.25, -0.2, 0, Math.PI*2);
+  ctx.ellipse(-s*0.2, s*0.35, s*0.13, s*0.22, -0.2, 0, Math.PI*2);
   ctx.fill();
   ctx.beginPath();
-  ctx.ellipse(s*0.2, s*0.35, s*0.15, s*0.25, 0.2, 0, Math.PI*2);
+  ctx.ellipse(s*0.2, s*0.35, s*0.13, s*0.22, 0.2, 0, Math.PI*2);
   ctx.fill();
-  // 中间一条细纹
-  ctx.fillStyle = 'rgba(0,0,0,0.15)';
+
+  // 腹部中线
+  ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+  ctx.lineWidth = 0.8;
   ctx.beginPath();
-  ctx.ellipse(0, s*0.5, s*0.05, s*0.4, 0, 0, Math.PI*2);
-  ctx.fill();
+  ctx.moveTo(0, s*0.1);
+  for (var mi = 0; mi <= 10; mi++) {
+    var my = s*0.1 + (mi/10) * s*0.7;
+    var mx = Math.sin(mi * 2 + seed) * s * 0.04;
+    ctx.lineTo(mx, my);
+  }
+  ctx.stroke();
 
   // 腹部高光
-  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  ctx.fillStyle = 'rgba(255,255,255,0.06)';
   ctx.beginPath();
-  ctx.ellipse(-s*0.15, s*0.3, s*0.2, s*0.3, -0.1, 0, Math.PI*2);
+  ctx.ellipse(-s*0.12, s*0.28, s*0.18, s*0.25, -0.1, 0, Math.PI*2);
   ctx.fill();
 
-  // 腹部绒毛
-  ctx.strokeStyle = 'rgba(200,190,180,0.12)';
-  ctx.lineWidth = 0.5;
-  var furCount = Math.floor(s * 1.5);
-  for (var f = 0; f < furCount; f++) {
-    var fa = Math.random() * Math.PI * 2;
-    var fd = 0.35 + Math.random() * 0.5;
-    var fx = Math.cos(fa) * s * 0.65 * 0.85;
-    var fy = s * 0.5 + Math.sin(fa) * s * 0.8 * 0.85;
-    // 只画边缘的毛
-    var edgeDist = Math.abs(Math.sqrt(fx*fx/(s*0.65)/(s*0.65) + (fy-s*0.5)*(fy-s*0.5)/(s*0.8)/(s*0.8)) - 1);
-    if (edgeDist > 0.15) continue;
-    var furLen = s * (0.04 + Math.random() * 0.08);
-    var furAngle = Math.atan2(Math.sin(fa), Math.cos(fa) * 0.8);
-    furAngle += (Math.random() - 0.5) * 0.6;
+  // ── 腹部绒毛表层 ──
+  ctx.strokeStyle = 'rgba(200,190,180,0.08)';
+  ctx.lineWidth = 0.3;
+  for (var f2 = 0; f2 < 60; f2++) {
+    var fa2 = Math.random() * Math.PI * 2;
+    var fd2 = 0.8 + Math.random() * 0.25;
+    var fx2 = Math.cos(fa2) * s * 0.62 * fd2;
+    var fy2 = s * 0.5 + Math.sin(fa2) * s * 0.78 * fd2;
+    var fl2 = s * (0.04 + Math.random() * 0.08);
+    var fang2 = Math.atan2(Math.sin(fa2) * 0.78, Math.cos(fa2)) + (Math.random() - 0.5) * 0.6;
     ctx.beginPath();
-    ctx.moveTo(fx, fy);
-    ctx.lineTo(fx + Math.cos(furAngle) * furLen, fy + Math.sin(furAngle) * furLen);
+    ctx.moveTo(fx2, fy2);
+    ctx.lineTo(fx2 + Math.cos(fang2) * fl2, fy2 + Math.sin(fang2) * fl2);
     ctx.stroke();
   }
 
-  // ===== 头胸部（大脑袋） =====
-  var grad2 = ctx.createRadialGradient(-s*0.05, -s*0.15, 0, 0, 0, s*0.5);
-  grad2.addColorStop(0, lighten(spider.bodyColor, 25));
-  grad2.addColorStop(0.6, spider.bodyColor);
-  grad2.addColorStop(1, darken(spider.bodyColor, 20));
-  ctx.fillStyle = grad2;
+  // ── 头胸部绒毛底层 ──
+  ctx.strokeStyle = 'rgba(200,190,180,0.05)';
+  ctx.lineWidth = 0.5;
+  for (var f3 = 0; f3 < 60; f3++) {
+    var fa3 = Math.random() * Math.PI * 2;
+    var fd3 = 0.7 + Math.random() * 0.3;
+    var fx3 = Math.cos(fa3) * s * 0.48 * fd3;
+    var fy3 = -s * 0.2 + Math.sin(fa3) * s * 0.42 * fd3;
+    var fl3 = s * (0.05 + Math.random() * 0.1);
+    var fang3 = Math.atan2(Math.sin(fa3) * 0.7, Math.cos(fa3)) + (Math.random() - 0.5) * 0.7;
+    ctx.beginPath();
+    ctx.moveTo(fx3, fy3);
+    ctx.lineTo(fx3 + Math.cos(fang3) * fl3, fy3 + Math.sin(fang3) * fl3);
+    ctx.stroke();
+  }
+
+  // ── 头胸部（大脑袋） ──
   ctx.beginPath();
-  ctx.ellipse(0, -s * 0.2, s * 0.5, s * 0.45, 0, 0, Math.PI * 2);
+  for (var i = 0; i <= aPts; i++) {
+    var ang = (i / aPts) * Math.PI * 2;
+    var rx = s * 0.47 + Math.sin(ang * 2 + seed * 1.7) * s * 0.02;
+    var ry = s * 0.42 + Math.sin(ang * 3 + seed * 2.1) * s * 0.02;
+    var px = Math.cos(ang) * rx;
+    var py = -s * 0.2 + Math.sin(ang) * ry;
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+  var grad2 = ctx.createRadialGradient(-s*0.05, -s*0.25, 0, 0, -s*0.2, s*0.5);
+  grad2.addColorStop(0, lighten(spider.bodyColor, 30));
+  grad2.addColorStop(0.5, spider.bodyColor);
+  grad2.addColorStop(1, darken(spider.bodyColor, 25));
+  ctx.fillStyle = grad2;
   ctx.fill();
 
   // 头胸部高光
-  ctx.fillStyle = 'rgba(255,255,255,0.1)';
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
   ctx.beginPath();
-  ctx.ellipse(-s*0.1, -s*0.3, s*0.2, s*0.15, -0.1, 0, Math.PI*2);
+  ctx.ellipse(-s*0.08, -s*0.32, s*0.15, s*0.12, -0.1, 0, Math.PI*2);
   ctx.fill();
 
-  // 头胸部绒毛
-  ctx.strokeStyle = 'rgba(200,190,180,0.1)';
-  ctx.lineWidth = 0.4;
-  var furCount2 = Math.floor(s * 1);
-  for (var f2 = 0; f2 < furCount2; f2++) {
-    var fa2 = Math.random() * Math.PI * 2;
-    var fx2 = Math.cos(fa2) * s * 0.5 * 0.8;
-    var fy2 = -s * 0.2 + Math.sin(fa2) * s * 0.45 * 0.8;
-    var edgeDist2 = Math.abs(Math.sqrt(fx2*fx2/(s*0.5)/(s*0.5) + (fy2+s*0.2)*(fy2+s*0.2)/(s*0.45)/(s*0.45)) - 1);
-    if (edgeDist2 > 0.2) continue;
-    var furLen2 = s * (0.03 + Math.random() * 0.07);
-    var furAngle2 = Math.atan2(Math.sin(fa2), Math.cos(fa2) * 0.7);
-    furAngle2 += (Math.random() - 0.5) * 0.6;
+  // ── 头胸部绒毛表层 ──
+  ctx.strokeStyle = 'rgba(200,190,180,0.06)';
+  ctx.lineWidth = 0.3;
+  for (var f4 = 0; f4 < 30; f4++) {
+    var fa4 = Math.random() * Math.PI * 2;
+    var fd4 = 0.8 + Math.random() * 0.25;
+    var fx4 = Math.cos(fa4) * s * 0.47 * fd4;
+    var fy4 = -s * 0.2 + Math.sin(fa4) * s * 0.42 * fd4;
+    var fl4 = s * (0.03 + Math.random() * 0.07);
+    var fang4 = Math.atan2(Math.sin(fa4) * 0.7, Math.cos(fa4)) + (Math.random() - 0.5) * 0.5;
     ctx.beginPath();
-    ctx.moveTo(fx2, fy2);
-    ctx.lineTo(fx2 + Math.cos(furAngle2) * furLen2, fy2 + Math.sin(furAngle2) * furLen2);
+    ctx.moveTo(fx4, fy4);
+    ctx.lineTo(fx4 + Math.cos(fang4) * fl4, fy4 + Math.sin(fang4) * fl4);
     ctx.stroke();
   }
 
-  // ===== 眼睛 =====
-  // 前排4只小眼
-  var eyeSize = s * 0.06;
-  var eyeSpread = s * 0.18;
+  // ── 腰（头胸和腹之间的细腰） ──
+  ctx.fillStyle = darken(spider.bodyColor, 10);
+  ctx.beginPath();
+  ctx.ellipse(0, s * 0.05, s * 0.12, s * 0.06, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // ── 腿 ──
+  // 所有腿在绒毛之后画，让腿毛在腿上面
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  var legSwing = Math.sin(spider.legPhase) * 0.3;
+
+  for (var side = -1; side <= 1; side += 2) {
+    for (var li = 0; li < 4; li++) {
+      var legPos = (li / 3 - 0.5) * 1.0;
+      var baseY = legPos * s * 0.5;
+
+      // 各段长度（腿越往后越长）
+      var lenF = s * (1.0 + li * 0.18);  // 股节
+      var lenT = s * (1.2 + li * 0.15);  // 胫节
+      var lenM = s * (0.8 - li * 0.04);  // 跗节
+
+      // 关节角度 - 用正弦让腿自然弯曲
+      var baseAng = (0.35 + li * 0.08);
+      var ang1 = side * (baseAng + legSwing * 0.4 + Math.sin(t * 0.3 + li + seed) * 0.05);
+      var ang2 = side * (0.5 + legSwing * 0.3 + Math.sin(t * 0.25 + li * 0.7 + seed) * 0.06);
+      var ang3 = side * (1.2 + legSwing * 0.15 + Math.sin(t * 0.2 + li * 0.5 + seed) * 0.08);
+
+      // 腿起点（从身体侧面伸出）
+      var startX = side * s * 0.38;
+      var startY = baseY;
+
+      // 股节终点
+      var fEndX = startX + Math.cos(ang1) * lenF;
+      var fEndY = startY + Math.sin(ang1) * lenF * 0.4;
+      // 股节控制点（弯曲）
+      var fCpx = startX + Math.cos(ang1 - side * 0.15) * lenF * 0.5;
+      var fCpy = startY + Math.sin(ang1 - side * 0.15) * lenF * 0.5 * 0.4;
+
+      // 胫节终点
+      var tEndX = fEndX + Math.cos(ang1 + ang2) * lenT;
+      var tEndY = fEndY + Math.sin(ang1 + ang2) * lenT;
+      // 胫节控制点
+      var tCpx = fEndX + Math.cos(ang1 + ang2 - side * 0.2) * lenT * 0.5;
+      var tCpy = fEndY + Math.sin(ang1 + ang2 - side * 0.2) * lenT * 0.5;
+
+      // 跗节终点
+      var mEndX = tEndX + Math.cos(ang1 + ang2 + ang3) * lenM;
+      var mEndY = tEndY + Math.sin(ang1 + ang2 + ang3) * lenM;
+
+      // ── 画腿（用贝塞尔曲线） ──
+      // 股节（最粗）
+      ctx.strokeStyle = spider.legColor;
+      ctx.lineWidth = 2.0 - li * 0.1;
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.quadraticCurveTo(fCpx, fCpy, fEndX, fEndY);
+      ctx.stroke();
+
+      // 胫节
+      ctx.lineWidth = 1.5 - li * 0.1;
+      ctx.beginPath();
+      ctx.moveTo(fEndX, fEndY);
+      ctx.quadraticCurveTo(tCpx, tCpy, tEndX, tEndY);
+      ctx.stroke();
+
+      // 跗节（最细）
+      ctx.lineWidth = 0.8 - li * 0.05;
+      ctx.beginPath();
+      ctx.moveTo(tEndX, tEndY);
+      ctx.lineTo(mEndX, mEndY);
+      ctx.stroke();
+
+      // ── 腿毛 ──
+      ctx.strokeStyle = 'rgba(200,190,180,0.18)';
+      // 股节毛
+      for (var h = 0; h < 6 + li; h++) {
+        var frac = h / (6 + li);
+        var hx = startX + (fEndX - startX) * frac;
+        var hy = startY + (fEndY - startY) * frac;
+        // 曲线上取点的大概位置
+        var hT = frac;
+        var hAngle = ang1 + (h % 2 === 0 ? 1.0 : -1.0) * (0.8 - li * 0.08) + Math.sin(t + h + seed) * 0.15;
+        var hLen = s * (0.04 + li * 0.015);
+        ctx.lineWidth = 0.3;
+        ctx.beginPath();
+        ctx.moveTo(hx, hy);
+        ctx.lineTo(hx + Math.cos(hAngle) * hLen, hy + Math.sin(hAngle) * hLen);
+        ctx.stroke();
+      }
+      // 胫节毛
+      ctx.strokeStyle = 'rgba(200,190,180,0.12)';
+      for (var h = 0; h < 5 + li; h++) {
+        var frac = h / (5 + li);
+        var hx = fEndX + (tEndX - fEndX) * frac;
+        var hy = fEndY + (tEndY - fEndY) * frac;
+        var hAngle = ang1 + ang2 + (h % 2 === 0 ? 1.2 : -1.2) * (0.6 - li * 0.06) + Math.sin(t * 0.5 + h + seed) * 0.2;
+        var hLen = s * (0.035 + li * 0.01);
+        ctx.lineWidth = 0.25;
+        ctx.beginPath();
+        ctx.moveTo(hx, hy);
+        ctx.lineTo(hx + Math.cos(hAngle) * hLen, hy + Math.sin(hAngle) * hLen);
+        ctx.stroke();
+      }
+    }
+  }
+
+  // ── 身体投影 ──
+  ctx.fillStyle = 'rgba(0,0,0,0.15)';
+  ctx.beginPath();
+  ctx.ellipse(0, s * 0.85, s * 0.6, s * 0.2, 0.2, 0, Math.PI * 2);
+  ctx.fill();
+
+  // ── 眼睛 ──
+  var eyeSize = s * 0.055;
+  var eyeSpread = s * 0.17;
   var eyeY = -s * 0.45;
 
   // 眼白
-  ctx.fillStyle = 'rgba(255,255,255,0.8)';
+  ctx.fillStyle = 'rgba(220,210,200,0.85)';
   [[-eyeSpread*1.0, eyeY], [-eyeSpread*0.45, eyeY - s*0.04],
    [eyeSpread*0.45, eyeY - s*0.04], [eyeSpread*1.0, eyeY]].forEach(function(e) {
     ctx.beginPath();
@@ -599,7 +650,7 @@ function drawSpider(time) {
   });
 
   // 瞳孔
-  ctx.fillStyle = 'rgba(0,0,0,0.8)';
+  ctx.fillStyle = 'rgba(10,8,8,0.9)';
   [[-eyeSpread*1.0, eyeY], [-eyeSpread*0.45, eyeY - s*0.04],
    [eyeSpread*0.45, eyeY - s*0.04], [eyeSpread*1.0, eyeY]].forEach(function(e) {
     ctx.beginPath();
@@ -607,49 +658,49 @@ function drawSpider(time) {
     ctx.fill();
   });
 
-  // 眼睛高光
-  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  // 高光
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
   [[-eyeSpread*0.9, eyeY - s*0.02], [-eyeSpread*0.35, eyeY - s*0.06],
    [eyeSpread*0.55, eyeY - s*0.06], [eyeSpread*1.1, eyeY - s*0.02]].forEach(function(e) {
     ctx.beginPath();
-    ctx.arc(e[0], e[1], eyeSize * 0.25, 0, Math.PI * 2);
+    ctx.arc(e[0], e[1], eyeSize * 0.22, 0, Math.PI * 2);
     ctx.fill();
   });
 
-  // 后排2只小眼
-  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  // 后排小眼
+  ctx.fillStyle = 'rgba(220,210,200,0.4)';
   [[-eyeSpread*0.7, eyeY + s*0.04], [eyeSpread*0.7, eyeY + s*0.04]].forEach(function(e) {
     ctx.beginPath();
-    ctx.arc(e[0], e[1], eyeSize * 0.6, 0, Math.PI * 2);
+    ctx.arc(e[0], e[1], eyeSize * 0.55, 0, Math.PI * 2);
     ctx.fill();
+    ctx.fillStyle = 'rgba(10,8,8,0.5)';
+    ctx.beginPath();
+    ctx.arc(e[0], e[1], eyeSize * 0.28, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(220,210,200,0.4)';
   });
 
-  // ===== 螯肢（口器前方） =====
-  ctx.strokeStyle = darken(spider.bodyColor, 15);
-  ctx.lineWidth = 1.0;
-  ctx.fillStyle = spider.bodyColor;
+  // ── 螯肢（口器前方） ──
+  ctx.fillStyle = darken(spider.bodyColor, 20);
   for (var side = -1; side <= 1; side += 2) {
     ctx.beginPath();
-    var mx = side * s * 0.12;
-    var my = -s * 0.35;
-    ctx.moveTo(side * s * 0.08, -s * 0.38);
-    ctx.quadraticCurveTo(mx, my - s*0.1, mx * 1.3, my - s*0.05);
-    ctx.quadraticCurveTo(mx, my + s*0.05, side * s * 0.08, -s * 0.32);
+    ctx.moveTo(side * s * 0.06, -s * 0.38);
+    ctx.quadraticCurveTo(side * s * 0.14, -s * 0.52, side * s * 0.22, -s * 0.48);
+    ctx.quadraticCurveTo(side * s * 0.14, -s * 0.40, side * s * 0.06, -s * 0.34);
     ctx.fill();
   }
 
-  // ===== 触肢（pedipalps，小触须） =====
+  // ── 触肢 ──
   ctx.strokeStyle = spider.legColor;
-  ctx.lineWidth = 0.8;
+  ctx.lineWidth = 0.6;
   for (var side = -1; side <= 1; side += 2) {
     ctx.beginPath();
-    ctx.moveTo(side * s * 0.15, -s * 0.35);
-    ctx.quadraticCurveTo(side * s * 0.35, -s * 0.55, side * s * 0.2, -s * 0.65);
+    ctx.moveTo(side * s * 0.12, -s * 0.35);
+    ctx.quadraticCurveTo(side * s * 0.3, -s * 0.55, side * s * 0.15, -s * 0.62);
     ctx.stroke();
-    // 触肢末端小球
     ctx.fillStyle = spider.legColor;
     ctx.beginPath();
-    ctx.arc(side * s * 0.2, -s * 0.65, 0.8, 0, Math.PI * 2);
+    ctx.arc(side * s * 0.15, -s * 0.62, s * 0.02, 0, Math.PI * 2);
     ctx.fill();
   }
 
