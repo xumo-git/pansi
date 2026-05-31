@@ -262,75 +262,60 @@ document.addEventListener('mouseleave', function() {
   mouseActive = false;
 });
 
-/* ── 八卦蛛网 ── */
+/* ── 八卦圆网 ── */
 var webs = [];
 
 function initWebs() {
   webs = [];
-  // 5-8 张网散布屏幕
-  var count = 5 + Math.floor(Math.random() * 4);
+  var count = 6 + Math.floor(Math.random() * 4);
   for (var i = 0; i < count; i++) {
-    var x, y, spread;
-    if (Math.random() < 0.5) {
-      // 角落网
-      x = (Math.random() < 0.5 ? 0 : W);
-      y = (Math.random() < 0.5 ? 0 : H);
-      spread = 80 + Math.random() * 170;
-    } else {
-      // 中间网
-      x = 50 + Math.random() * (W - 100);
-      y = 50 + Math.random() * (H - 100);
-      spread = 60 + Math.random() * 130;
-    }
-    webs.push(makeOctagonalWeb(x, y, spread));
+    var x = 80 + Math.random() * (W - 160);
+    var y = 80 + Math.random() * (H - 160);
+    var spread = 80 + Math.random() * 140;
+    webs.push(makeWeb(x, y, spread));
   }
 }
 
-function makeOctagonalWeb(ax, ay, spread) {
-  var rings = 4 + Math.floor(Math.random() * 3);
-  var swayPhase = Math.random() * Math.PI * 2;
-  var swaySpeed = 0.1 + Math.random() * 0.2;
-  // 8 条辐射线，均分 360 度
+function makeWeb(ax, ay, spread) {
+  var rings = 5 + Math.floor(Math.random() * 3);
+  var phase = Math.random() * Math.PI * 2;
+  var speed = 0.08 + Math.random() * 0.15;
   var radials = [];
   for (var i = 0; i < 8; i++) {
-    radials.push((i / 8) * Math.PI * 2 + (Math.random() - 0.5) * 0.08);
+    radials.push((i / 8) * Math.PI * 2 + (Math.random() - 0.5) * 0.04);
   }
-  return { ax: ax, ay: ay, radials: radials, rings: rings, spread: spread, swayPhase: swayPhase, swaySpeed: swaySpeed };
+  return { ax: ax, ay: ay, radials: radials, rings: rings, spread: spread, phase: phase, speed: speed };
 }
 
 function drawWebs(time) {
   webs.forEach(function(w) {
-    var sway = Math.sin(time * w.swaySpeed + w.swayPhase) * 2;
+    var sway = Math.sin(time * w.speed + w.phase) * 1.5;
     var cx = w.ax + sway;
-    var cy = w.ay + sway * 0.5;
-    var rad = w.radials;
+    var cy = w.ay + sway * 0.3;
     var n = 8;
-    var alpha = 0.35 + Math.random() * 0.1;
+    var alpha = 0.3;
 
-    // 8 条辐射丝
-    ctx.strokeStyle = 'rgba(210,200,190,' + (alpha + 0.05) + ')';
-    ctx.lineWidth = 1.2;
+    // 辐射丝
+    ctx.strokeStyle = 'rgba(200,190,180,' + alpha + ')';
+    ctx.lineWidth = 0.8 + Math.sin(time * 0.2 + w.phase) * 0.1;
     for (var i = 0; i < n; i++) {
-      var angle = rad[i];
-      var ex = cx + Math.cos(angle) * w.spread;
-      var ey = cy + Math.sin(angle) * w.spread;
+      var a = w.radials[i];
       ctx.beginPath();
       ctx.moveTo(cx, cy);
-      ctx.lineTo(ex, ey);
+      ctx.lineTo(cx + Math.cos(a) * w.spread, cy + Math.sin(a) * w.spread);
       ctx.stroke();
     }
 
-    // 八角形环（用 8 条直线连成八边形）
-    ctx.strokeStyle = 'rgba(210,200,190,' + alpha + ')';
-    ctx.lineWidth = 0.9;
+    // 八边形环
+    ctx.lineWidth = 0.6;
     for (var ri = 1; ri <= w.rings; ri++) {
-      var ringR = (ri / w.rings) * w.spread;
+      var rr = (ri / w.rings) * w.spread;
+      ctx.strokeStyle = 'rgba(200,190,180,' + (alpha * (0.5 + ri / w.rings * 0.5)) + ')';
       ctx.beginPath();
       for (var i = 0; i <= n; i++) {
-        var idx = i % n;
-        var a = rad[idx];
-        var px = cx + Math.cos(a) * ringR;
-        var py = cy + Math.sin(a) * ringR;
+        var a = w.radials[i % n];
+        var px = cx + Math.cos(a) * rr;
+        var py = cy + Math.sin(a) * rr;
         if (i === 0) ctx.moveTo(px, py);
         else ctx.lineTo(px, py);
       }
@@ -338,18 +323,17 @@ function drawWebs(time) {
       ctx.stroke();
     }
 
-    // 散落垂丝
-    ctx.strokeStyle = 'rgba(210,200,190,' + (alpha * 0.6) + ')';
-    ctx.lineWidth = 0.6;
-    for (var i = 0; i < 3; i++) {
+    // 垂丝
+    ctx.strokeStyle = 'rgba(200,190,180,' + (alpha * 0.4) + ')';
+    ctx.lineWidth = 0.5;
+    for (var i = 0; i < 2; i++) {
       var si = Math.floor(Math.random() * n);
-      var sa = rad[si];
-      var sx = cx + Math.cos(sa) * w.spread * (0.3 + Math.random() * 0.5);
-      var sy = cy + Math.sin(sa) * w.spread * (0.3 + Math.random() * 0.5);
-      var drop = 15 + Math.random() * 30;
+      var sa = w.radials[si];
+      var sx = cx + Math.cos(sa) * w.spread * (0.4 + Math.random() * 0.4);
+      var sy = cy + Math.sin(sa) * w.spread * (0.4 + Math.random() * 0.4);
       ctx.beginPath();
       ctx.moveTo(sx, sy);
-      ctx.quadraticCurveTo(sx + (Math.random()-0.5)*20, sy + drop, sx + (Math.random()-0.5)*30, sy + drop + 8);
+      ctx.quadraticCurveTo(sx + (Math.random()-0.5)*15, sy + 20 + Math.random()*20, sx + (Math.random()-0.5)*20, sy + 40 + Math.random()*20);
       ctx.stroke();
     }
   });
@@ -373,19 +357,18 @@ var SPIDER_PALETTES = [
 
 function createSpider() {
   var pal = SPIDER_PALETTES[Math.floor(Math.random() * SPIDER_PALETTES.length)];
-  return {
+  var crawler = Math.random() < 0.4;
+  var sp = {
     size: 1.0 + Math.random() * 1.2,
     phase: Math.random() * 100,
     legPhase: 0,
-    anchorX: 20 + Math.random() * (W - 40),
-    anchorY: -5 - Math.random() * 10,
-    threadLen: H * (0.2 + Math.random() * 0.5),
-    angle: (Math.random() - 0.5) * 0.5,
-    targetLen: 0,
-    state: 'swing',
-    stateTimer: 2 + Math.random() * 5,
-    windX: 0,
-    speed: 0.5 + Math.random() * 1.5,
+    mode: crawler ? 'crawl' : 'hang',
+    state: crawler ? 'wander' : 'swing',
+    stateTimer: 2 + Math.random() * 4,
+    speed: 0.8 + Math.random() * 1.5,
+    x: crawler ? (30 + Math.random() * (W - 60)) : 0,
+    y: crawler ? (30 + Math.random() * (H - 60)) : 0,
+    targetX: 0, targetY: 0,
     temper: Math.random() < 0.5 ? 'timid' : 'aggressive',
     bodyColor: pal.body,
     abdomenColor: pal.abdomen,
@@ -393,18 +376,26 @@ function createSpider() {
     markColor: pal.mark,
     pal: pal
   };
+  if (crawler) {
+    sp.targetX = 30 + Math.random() * (W - 60);
+    sp.targetY = 30 + Math.random() * (H - 60);
+  } else {
+    sp.anchorX = 20 + Math.random() * (W - 40);
+    sp.anchorY = -5 - Math.random() * 10;
+    sp.threadLen = H * (0.2 + Math.random() * 0.5);
+    sp.angle = (Math.random() - 0.5) * 0.5;
+    sp.targetLen = sp.threadLen;
+    sp.windX = 0;
+    sp.x = sp.anchorX + Math.sin(sp.angle) * sp.threadLen;
+    sp.y = sp.anchorY + Math.cos(sp.angle) * sp.threadLen;
+  }
+  return sp;
 }
 
 function initSpiders() {
   spiders = [];
-    var count = 8 + Math.floor(Math.random() * 5);
-  for (var i = 0; i < count; i++) {
-    var sp = createSpider();
-    sp.targetLen = sp.threadLen;
-    sp.x = sp.anchorX + Math.sin(sp.angle) * sp.threadLen;
-    sp.y = sp.anchorY + Math.cos(sp.angle) * sp.threadLen;
-    spiders.push(sp);
-  }
+  var count = 8 + Math.floor(Math.random() * 5);
+  for (var i = 0; i < count; i++) spiders.push(createSpider());
 }
 
 function updateSpiders() {
@@ -412,121 +403,101 @@ function updateSpiders() {
   spiders.forEach(function(sp) {
     sp.stateTimer -= 0.016;
 
-    // 各自不同的风
-    sp.windX = Math.sin(t * (0.1 + sp.phase * 0.005) + sp.phase) * (4 + sp.size * 2)
-             + Math.sin(t * (0.2 + sp.phase * 0.003) + sp.phase * 1.3) * 2;
+    if (sp.mode === 'hang') {
+      // ── 悬挂蜘蛛 ──
+      sp.windX = Math.sin(t * (0.1 + sp.phase * 0.005) + sp.phase) * (4 + sp.size * 2)
+               + Math.sin(t * (0.2 + sp.phase * 0.003) + sp.phase * 1.3) * 2;
+      var gravity = 0.003;
+      var damping = 0.997 + sp.size * 0.0005;
+      var windForce = Math.sin(t * (0.15 + sp.phase * 0.002) + sp.phase) * 0.0001;
+      var accel = -gravity * Math.sin(sp.angle) / (sp.threadLen * 0.008 + 1) + windForce;
+      sp.angle = sp.angle * damping + accel - Math.sin(sp.angle) * 0.0004;
 
-    // 摆锤运动
-    var gravity = 0.003;
-    var damping = 0.997 + sp.size * 0.0005;
-    var windForce = Math.sin(t * (0.15 + sp.phase * 0.002) + sp.phase) * 0.0001;
-    var accel = -gravity * Math.sin(sp.angle) / (sp.threadLen * 0.008 + 1) + windForce;
-    sp.angle = sp.angle * damping + accel - Math.sin(sp.angle) * 0.0004;
-
-    // 状态切换
-    if (sp.state === 'swing') {
-      if (sp.stateTimer <= 0) {
-        var r = Math.random();
-        if (r < 0.35) {
-          sp.state = 'climb';
-          sp.targetLen = sp.threadLen * (0.3 + Math.random() * 0.3);
-          sp.stateTimer = 1 + Math.random() * 1.5;
-        } else if (r < 0.55) {
-          sp.state = 'rappel';
-          sp.targetLen = Math.min(H * 0.88, sp.threadLen * (1.2 + Math.random() * 0.6));
-          sp.stateTimer = 1.5 + Math.random() * 2;
-        } else if (r < 0.75) {
-          // 换锚点（飘走）
-          sp.state = 'drift';
-          sp.targetLen = sp.threadLen;
-          sp.stateTimer = 1 + Math.random() * 2;
-        } else {
-          sp.stateTimer = 2 + Math.random() * 4;
+      if (sp.state === 'swing') {
+        if (sp.stateTimer <= 0) {
+          var r = Math.random();
+          if (r < 0.35) { sp.state = 'climb'; sp.targetLen = sp.threadLen * (0.3 + Math.random() * 0.3); sp.stateTimer = 1 + Math.random() * 1.5; }
+          else if (r < 0.55) { sp.state = 'rappel'; sp.targetLen = Math.min(H * 0.88, sp.threadLen * (1.2 + Math.random() * 0.6)); sp.stateTimer = 1.5 + Math.random() * 2; }
+          else if (r < 0.75) { sp.state = 'drift'; sp.targetLen = sp.threadLen; sp.stateTimer = 1 + Math.random() * 2; }
+          else sp.stateTimer = 2 + Math.random() * 4;
         }
       }
-    }
-
-    if (sp.state === 'climb') {
-      if (Math.abs(sp.threadLen - sp.targetLen) > 2) {
-        sp.threadLen -= sp.speed * 0.8;
-        sp.legPhase += 0.08;
-      } else {
-        sp.state = 'swing';
-        sp.stateTimer = 2 + Math.random() * 4;
+      if (sp.state === 'climb') {
+        if (Math.abs(sp.threadLen - sp.targetLen) > 2) { sp.threadLen -= sp.speed * 0.8; sp.legPhase += 0.08; }
+        else { sp.state = 'swing'; sp.stateTimer = 2 + Math.random() * 4; }
       }
-    }
-
-    if (sp.state === 'rappel') {
-      if (Math.abs(sp.threadLen - sp.targetLen) > 2) {
-        sp.threadLen += sp.speed * 1.2;
-        sp.legPhase += 0.04;
-      } else {
-        sp.state = 'swing';
-        sp.stateTimer = 2 + Math.random() * 4;
+      if (sp.state === 'rappel') {
+        if (Math.abs(sp.threadLen - sp.targetLen) > 2) { sp.threadLen += sp.speed * 1.2; sp.legPhase += 0.04; }
+        else { sp.state = 'swing'; sp.stateTimer = 2 + Math.random() * 4; }
       }
-    }
-
-    if (sp.state === 'drift') {
-      sp.anchorX += (Math.random() - 0.5) * sp.speed * 2;
-      sp.anchorX = Math.max(10, Math.min(W - 10, sp.anchorX));
-      sp.stateTimer -= 0.016;
-      if (sp.stateTimer <= 0) {
-        sp.state = 'swing';
-        sp.stateTimer = 2 + Math.random() * 3;
+      if (sp.state === 'drift') {
+        sp.anchorX += (Math.random() - 0.5) * sp.speed * 2;
+        sp.anchorX = Math.max(10, Math.min(W - 10, sp.anchorX));
+        sp.stateTimer -= 0.016;
+        if (sp.stateTimer <= 0) { sp.state = 'swing'; sp.stateTimer = 2 + Math.random() * 3; }
       }
+
+      // 鼠标互动：胆小逃
+      if (mouseActive && sp.temper === 'timid') {
+        var mDist = Math.sqrt((sp.x-mouseX)*(sp.x-mouseX)+(sp.y-mouseY)*(sp.y-mouseY));
+        if (mDist < 180) { sp.state = 'escape'; sp.stateTimer = 0.8 + Math.random() * 0.5; if (sp.anchorY < 0) sp.targetLen = Math.max(30, sp.threadLen * 0.3); }
+      }
+      if (sp.state === 'escape') {
+        sp.threadLen *= 0.97; sp.angle += Math.sin(t*2+sp.phase)*0.02; sp.legPhase += 0.3;
+        sp.stateTimer -= 0.016;
+        if (sp.stateTimer <= 0 || sp.threadLen < 40) { sp.state = 'swing'; sp.stateTimer = 3 + Math.random() * 3; }
+      }
+
+      sp.threadLen = Math.max(30, Math.min(H * 0.9, sp.threadLen));
+      sp.x = sp.anchorX + Math.sin(sp.angle) * sp.threadLen + sp.windX;
+      sp.y = sp.anchorY + Math.cos(sp.angle) * sp.threadLen;
+      if (sp.y < 5) sp.y = 5;
     }
 
-    // ── 鼠标互动 ──
-    if (mouseActive) {
-      var mdx = sp.x - mouseX;
-      var mdy = sp.y - mouseY;
-      var mDist = Math.sqrt(mdx*mdx + mdy*mdy);
-      if (sp.temper === 'timid' && mDist < 180) {
-        sp.state = 'escape';
-        sp.stateTimer = 0.8 + Math.random() * 0.5;
-        if (sp.anchorY < 0) {
-          sp.targetLen = Math.max(30, sp.threadLen * 0.3);
+    if (sp.mode === 'crawl') {
+      // ── 爬行蜘蛛 ──
+      var dx = sp.targetX - sp.x;
+      var dy = sp.targetY - sp.y;
+      var dist = Math.sqrt(dx*dx + dy*dy);
+
+      // 鼠标互动
+      if (mouseActive) {
+        var mDist = Math.sqrt((sp.x-mouseX)*(sp.x-mouseX)+(sp.y-mouseY)*(sp.y-mouseY));
+        if (sp.temper === 'aggressive' && mDist < 250) {
+          // 追鼠标
+          sp.targetX = mouseX;
+          sp.targetY = mouseY;
+          sp.speed = 1.5 + Math.random() * 0.5;
+        }
+        if (sp.temper === 'timid' && mDist < 150) {
+          // 逃
+          sp.targetX = sp.x + (sp.x - mouseX) * 2;
+          sp.targetY = sp.y + (sp.y - mouseY) * 2;
+          sp.targetX = Math.max(10, Math.min(W-10, sp.targetX));
+          sp.targetY = Math.max(10, Math.min(H-10, sp.targetY));
+          sp.speed = 2 + Math.random();
+          sp.stateTimer = 0.5;
         }
       }
-      if (sp.temper === 'aggressive' && mDist < 300 && mDist > 30) {
-        sp.state = 'chase';
-        sp.stateTimer = 0.5;
+
+      if (sp.state === 'wander') {
+        if (sp.stateTimer <= 0 || dist < 15) {
+          sp.targetX = 30 + Math.random() * (W - 60);
+          sp.targetY = 30 + Math.random() * (H - 60);
+          sp.stateTimer = 3 + Math.random() * 4;
+          sp.speed = 0.8 + Math.random() * 1.2;
+        }
       }
-    }
 
-    if (sp.state === 'escape') {
-      sp.threadLen *= 0.97;
-      sp.angle += Math.sin(t * 2 + sp.phase) * 0.02;
-      sp.legPhase += 0.3;
-      sp.stateTimer -= 0.016;
-      if (sp.stateTimer <= 0 || sp.threadLen < 40) {
-        sp.state = 'swing';
-        sp.stateTimer = 3 + Math.random() * 3;
+      if (dist > 3) {
+        var step = Math.min(sp.speed, dist);
+        sp.x += (dx / dist) * step;
+        sp.y += (dy / dist) * step;
+        sp.legPhase += 0.06 + sp.speed * 0.03;
       }
+      sp.x = Math.max(10, Math.min(W-10, sp.x));
+      sp.y = Math.max(10, Math.min(H-10, sp.y));
     }
-
-    if (sp.state === 'chase') {
-      // 朝鼠标方向放丝 + 摆荡
-      if (sp.threadLen < H * 0.8) sp.threadLen *= 1.02;
-      var chaseAngle = Math.atan2(mouseY - sp.y, mouseX - sp.x);
-      sp.angle += (chaseAngle - sp.angle) * 0.02;
-      sp.legPhase += 0.2;
-      sp.stateTimer -= 0.016;
-      if (sp.stateTimer <= 0 || mDist < 40 || !mouseActive) {
-        sp.state = 'swing';
-        sp.stateTimer = 1 + Math.random() * 2;
-      } else {
-        sp.stateTimer = 0.3;
-      }
-    }
-
-    // 限位
-    sp.threadLen = Math.max(30, Math.min(H * 0.9, sp.threadLen));
-
-    // 计算位置
-    sp.x = sp.anchorX + Math.sin(sp.angle) * sp.threadLen + sp.windX;
-    sp.y = sp.anchorY + Math.cos(sp.angle) * sp.threadLen;
-    if (sp.y < 5) sp.y = 5;
   });
 }
 
@@ -536,28 +507,38 @@ function drawSpider(sp, time) {
   var t = time;
   var seed = sp.phase;
 
-  // ── 蛛丝 ──
-  ctx.strokeStyle = 'rgba(210,200,190,0.4)';
-  ctx.lineWidth = 1.5 + sp.size * 0.4;
-  ctx.beginPath();
-  ctx.moveTo(sp.anchorX, sp.anchorY);
-  var midX = (sp.anchorX + x) / 2 + Math.sin(t * (0.3 + seed * 0.01) + seed) * (5 + sp.size * 5);
-  var midY = (sp.anchorY + y) / 2 - 5;
-  ctx.quadraticCurveTo(midX, midY, x, y - s * 0.2);
-  ctx.stroke();
-
-  // 丝的反光
-  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-  ctx.lineWidth = 0.8;
-  ctx.beginPath();
-  ctx.moveTo(sp.anchorX + 1, sp.anchorY + 1);
-  ctx.quadraticCurveTo(midX + 2, midY + 2, x + 2, y - s * 0.2 + 1);
-  ctx.stroke();
+  // ── 蛛丝（仅悬挂模式） ──
+  if (sp.mode === 'hang') {
+    ctx.strokeStyle = 'rgba(210,200,190,0.4)';
+    ctx.lineWidth = 1.5 + sp.size * 0.4;
+    ctx.beginPath();
+    ctx.moveTo(sp.anchorX, sp.anchorY);
+    var midX = (sp.anchorX + x) / 2 + Math.sin(t * (0.3 + seed * 0.01) + seed) * (5 + sp.size * 5);
+    var midY = (sp.anchorY + y) / 2 - 5;
+    ctx.quadraticCurveTo(midX, midY, x, y - s * 0.2);
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(sp.anchorX + 1, sp.anchorY + 1);
+    ctx.quadraticCurveTo(midX + 2, midY + 2, x + 2, y - s * 0.2 + 1);
+    ctx.stroke();
+  }
 
   ctx.save();
   ctx.translate(x, y);
-  var tilt = sp.angle * 0.3 + Math.sin(t * (0.4 + seed * 0.01) + seed) * 0.03;
-  ctx.rotate(Math.PI + tilt);
+
+  if (sp.mode === 'hang') {
+    var tilt = sp.angle * 0.3 + Math.sin(t * (0.4 + seed * 0.01) + seed) * 0.03;
+    ctx.rotate(Math.PI + tilt);
+  } else {
+    // 爬行模式：朝向运动方向
+    var dx = sp.targetX - sp.x;
+    var dy = sp.targetY - sp.y;
+    if (dx*dx + dy*dy > 10) {
+      ctx.rotate(Math.atan2(dy, dx) + Math.PI/2);
+    }
+  }
 
   // ── 腹部绒毛底层（营造毛茸茸轮廓） ──
   ctx.strokeStyle = 'rgba(200,190,180,0.06)';
