@@ -369,6 +369,7 @@ function createSpider() {
     x: crawler ? (30 + Math.random() * (W - 60)) : 0,
     y: crawler ? (30 + Math.random() * (H - 60)) : 0,
     targetX: 0, targetY: 0,
+    topAngle: 0,
     temper: Math.random() < 0.5 ? 'timid' : 'aggressive',
     bodyColor: pal.body,
     abdomenColor: pal.abdomen,
@@ -506,46 +507,12 @@ function updateSpiders() {
   });
 }
 
-function drawSpider(sp, time) {
-  var x = sp.x, y = sp.y;
-  var s = 16 + sp.size * 6;
-  var t = time;
-  var seed = sp.phase;
-
-  // ── 蛛丝（仅悬挂模式） ──
-  if (sp.mode === 'hang') {
-    ctx.strokeStyle = 'rgba(210,200,190,0.4)';
-    ctx.lineWidth = 1.5 + sp.size * 0.4;
-    ctx.beginPath();
-    ctx.moveTo(sp.anchorX, sp.anchorY);
-    var midX = (sp.anchorX + x) / 2 + Math.sin(t * (0.3 + seed * 0.01) + seed) * (5 + sp.size * 5);
-    var midY = (sp.anchorY + y) / 2 - 5;
-    ctx.quadraticCurveTo(midX, midY, x, y - s * 0.2);
-    ctx.stroke();
-    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-    ctx.lineWidth = 0.8;
-    ctx.beginPath();
-    ctx.moveTo(sp.anchorX + 1, sp.anchorY + 1);
-    ctx.quadraticCurveTo(midX + 2, midY + 2, x + 2, y - s * 0.2 + 1);
-    ctx.stroke();
-  }
-
+function drawSideSpider(sp, time, x, y, s, t, seed) {
   ctx.save();
   ctx.translate(x, y);
+  var tilt = sp.angle * 0.3 + Math.sin(t * (0.4 + seed * 0.01) + seed) * 0.03;
+  ctx.rotate(Math.PI + tilt);
 
-  if (sp.mode === 'hang') {
-    var tilt = sp.angle * 0.3 + Math.sin(t * (0.4 + seed * 0.01) + seed) * 0.03;
-    ctx.rotate(Math.PI + tilt);
-  } else {
-    // 爬行模式：朝向运动方向
-    var dx = sp.targetX - sp.x;
-    var dy = sp.targetY - sp.y;
-    if (dx*dx + dy*dy > 10) {
-      ctx.rotate(Math.atan2(dy, dx) + Math.PI/2);
-    }
-  }
-
-  // ── 腹部绒毛底层（营造毛茸茸轮廓） ──
   ctx.strokeStyle = 'rgba(200,190,180,0.06)';
   ctx.lineWidth = 0.6;
   for (var f = 0; f < 120; f++) {
@@ -561,8 +528,6 @@ function drawSpider(sp, time) {
     ctx.stroke();
   }
 
-  // ── 腹部（大屁股） ──
-  // 用不规则路径比椭圆更真实
   ctx.beginPath();
   var aPts = 20;
   for (var i = 0; i <= aPts; i++) {
@@ -582,7 +547,6 @@ function drawSpider(sp, time) {
   ctx.fillStyle = grad;
   ctx.fill();
 
-  // 腹部花纹
   ctx.fillStyle = sp.markColor;
   ctx.beginPath();
   ctx.ellipse(-s*0.2, s*0.35, s*0.13, s*0.22, -0.2, 0, Math.PI*2);
@@ -591,7 +555,6 @@ function drawSpider(sp, time) {
   ctx.ellipse(s*0.2, s*0.35, s*0.13, s*0.22, 0.2, 0, Math.PI*2);
   ctx.fill();
 
-  // 腹部中线
   ctx.strokeStyle = 'rgba(0,0,0,0.1)';
   ctx.lineWidth = 0.8;
   ctx.beginPath();
@@ -603,13 +566,11 @@ function drawSpider(sp, time) {
   }
   ctx.stroke();
 
-  // 腹部高光
   ctx.fillStyle = 'rgba(255,255,255,0.06)';
   ctx.beginPath();
   ctx.ellipse(-s*0.12, s*0.28, s*0.18, s*0.25, -0.1, 0, Math.PI*2);
   ctx.fill();
 
-  // ── 腹部绒毛表层 ──
   ctx.strokeStyle = 'rgba(200,190,180,0.08)';
   ctx.lineWidth = 0.3;
   for (var f2 = 0; f2 < 60; f2++) {
@@ -625,7 +586,6 @@ function drawSpider(sp, time) {
     ctx.stroke();
   }
 
-  // ── 头胸部绒毛底层 ──
   ctx.strokeStyle = 'rgba(200,190,180,0.05)';
   ctx.lineWidth = 0.5;
   for (var f3 = 0; f3 < 60; f3++) {
@@ -641,15 +601,14 @@ function drawSpider(sp, time) {
     ctx.stroke();
   }
 
-  // ── 头胸部（大脑袋） ──
   ctx.beginPath();
-  for (var i = 0; i <= aPts; i++) {
-    var ang = (i / aPts) * Math.PI * 2;
+  for (var i3 = 0; i3 <= aPts; i3++) {
+    var ang = (i3 / aPts) * Math.PI * 2;
     var rx = s * 0.47 + Math.sin(ang * 2 + seed * 1.7) * s * 0.02;
     var ry = s * 0.42 + Math.sin(ang * 3 + seed * 2.1) * s * 0.02;
     var px = Math.cos(ang) * rx;
     var py = -s * 0.2 + Math.sin(ang) * ry;
-    if (i === 0) ctx.moveTo(px, py);
+    if (i3 === 0) ctx.moveTo(px, py);
     else ctx.lineTo(px, py);
   }
   ctx.closePath();
@@ -660,13 +619,11 @@ function drawSpider(sp, time) {
   ctx.fillStyle = grad2;
   ctx.fill();
 
-  // 头胸部高光
   ctx.fillStyle = 'rgba(255,255,255,0.08)';
   ctx.beginPath();
   ctx.ellipse(-s*0.08, -s*0.32, s*0.15, s*0.12, -0.1, 0, Math.PI*2);
   ctx.fill();
 
-  // ── 头胸部绒毛表层 ──
   ctx.strokeStyle = 'rgba(200,190,180,0.06)';
   ctx.lineWidth = 0.3;
   for (var f4 = 0; f4 < 30; f4++) {
@@ -682,59 +639,37 @@ function drawSpider(sp, time) {
     ctx.stroke();
   }
 
-  // ── 腰（头胸和腹之间的细腰） ──
   ctx.fillStyle = darken(sp.bodyColor, 10);
   ctx.beginPath();
   ctx.ellipse(0, s * 0.05, s * 0.12, s * 0.06, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  // ── 腿 ──
-  // 所有腿在绒毛之后画，让腿毛在腿上面
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
-
   var legSwing = Math.sin(sp.legPhase) * 0.3;
-
   for (var side = -1; side <= 1; side += 2) {
     for (var li = 0; li < 4; li++) {
       var legPos = (li / 3 - 0.5) * 1.0;
       var baseY = legPos * s * 0.5;
-
-      // 各段长度（腿越往后越长）
-      var lenF = s * (1.0 + li * 0.18);  // 股节
-      var lenT = s * (1.2 + li * 0.15);  // 胫节
-      var lenM = s * (0.8 - li * 0.04);  // 跗节
-
-      // 关节角度 - 用正弦让腿自然弯曲
+      var lenF = s * (1.0 + li * 0.18);
+      var lenT = s * (1.2 + li * 0.15);
+      var lenM = s * (0.8 - li * 0.04);
       var baseAng = (0.35 + li * 0.08);
       var ang1 = side * (baseAng + legSwing * 0.4 + Math.sin(t * 0.3 + li + seed) * 0.05);
       var ang2 = side * (0.5 + legSwing * 0.3 + Math.sin(t * 0.25 + li * 0.7 + seed) * 0.06);
       var ang3 = side * (1.2 + legSwing * 0.15 + Math.sin(t * 0.2 + li * 0.5 + seed) * 0.08);
-
-      // 腿起点（从身体侧面伸出）
       var startX = side * s * 0.38;
       var startY = baseY;
-
-      // 股节终点
       var fEndX = startX + Math.cos(ang1) * lenF;
       var fEndY = startY + Math.sin(ang1) * lenF * 0.4;
-      // 股节控制点（弯曲）
       var fCpx = startX + Math.cos(ang1 - side * 0.15) * lenF * 0.5;
       var fCpy = startY + Math.sin(ang1 - side * 0.15) * lenF * 0.5 * 0.4;
-
-      // 胫节终点
       var tEndX = fEndX + Math.cos(ang1 + ang2) * lenT;
       var tEndY = fEndY + Math.sin(ang1 + ang2) * lenT;
-      // 胫节控制点
       var tCpx = fEndX + Math.cos(ang1 + ang2 - side * 0.2) * lenT * 0.5;
       var tCpy = fEndY + Math.sin(ang1 + ang2 - side * 0.2) * lenT * 0.5;
-
-      // 跗节终点
       var mEndX = tEndX + Math.cos(ang1 + ang2 + ang3) * lenM;
       var mEndY = tEndY + Math.sin(ang1 + ang2 + ang3) * lenM;
-
-      // ── 画腿（用贝塞尔曲线） ──
-      // 股节（最粗）
       ctx.strokeStyle = 'rgba(255,255,255,0.06)';
       ctx.lineWidth = 4.0 - li * 0.2;
       ctx.beginPath();
@@ -747,8 +682,6 @@ function drawSpider(sp, time) {
       ctx.moveTo(startX, startY);
       ctx.quadraticCurveTo(fCpx, fCpy, fEndX, fEndY);
       ctx.stroke();
-
-      // 胫节
       ctx.strokeStyle = 'rgba(255,255,255,0.04)';
       ctx.lineWidth = 3.0 - li * 0.15;
       ctx.beginPath();
@@ -761,8 +694,6 @@ function drawSpider(sp, time) {
       ctx.moveTo(fEndX, fEndY);
       ctx.quadraticCurveTo(tCpx, tCpy, tEndX, tEndY);
       ctx.stroke();
-
-      // 跗节（最细）
       ctx.strokeStyle = 'rgba(255,255,255,0.03)';
       ctx.lineWidth = 1.5 - li * 0.08;
       ctx.beginPath();
@@ -775,16 +706,11 @@ function drawSpider(sp, time) {
       ctx.moveTo(tEndX, tEndY);
       ctx.lineTo(mEndX, mEndY);
       ctx.stroke();
-
-      // ── 腿毛 ──
       ctx.strokeStyle = 'rgba(200,190,180,0.18)';
-      // 股节毛
       for (var h = 0; h < 6 + li; h++) {
         var frac = h / (6 + li);
         var hx = startX + (fEndX - startX) * frac;
         var hy = startY + (fEndY - startY) * frac;
-        // 曲线上取点的大概位置
-        var hT = frac;
         var hAngle = ang1 + (h % 2 === 0 ? 1.0 : -1.0) * (0.8 - li * 0.08) + Math.sin(t + h + seed) * 0.15;
         var hLen = s * (0.04 + li * 0.015);
         ctx.lineWidth = 0.3;
@@ -793,7 +719,6 @@ function drawSpider(sp, time) {
         ctx.lineTo(hx + Math.cos(hAngle) * hLen, hy + Math.sin(hAngle) * hLen);
         ctx.stroke();
       }
-      // 胫节毛
       ctx.strokeStyle = 'rgba(200,190,180,0.12)';
       for (var h = 0; h < 5 + li; h++) {
         var frac = h / (5 + li);
@@ -810,18 +735,14 @@ function drawSpider(sp, time) {
     }
   }
 
-  // ── 身体投影 ──
   ctx.fillStyle = 'rgba(0,0,0,0.15)';
   ctx.beginPath();
   ctx.ellipse(0, s * 0.85, s * 0.6, s * 0.2, 0.2, 0, Math.PI * 2);
   ctx.fill();
 
-  // ── 眼睛 ──
   var eyeSize = s * 0.055;
   var eyeSpread = s * 0.17;
   var eyeY = -s * 0.45;
-
-  // 眼白
   ctx.fillStyle = 'rgba(220,210,200,0.85)';
   [[-eyeSpread*1.0, eyeY], [-eyeSpread*0.45, eyeY - s*0.04],
    [eyeSpread*0.45, eyeY - s*0.04], [eyeSpread*1.0, eyeY]].forEach(function(e) {
@@ -829,8 +750,6 @@ function drawSpider(sp, time) {
     ctx.arc(e[0], e[1], eyeSize, 0, Math.PI * 2);
     ctx.fill();
   });
-
-  // 瞳孔
   ctx.fillStyle = 'rgba(10,8,8,0.9)';
   [[-eyeSpread*1.0, eyeY], [-eyeSpread*0.45, eyeY - s*0.04],
    [eyeSpread*0.45, eyeY - s*0.04], [eyeSpread*1.0, eyeY]].forEach(function(e) {
@@ -838,8 +757,6 @@ function drawSpider(sp, time) {
     ctx.arc(e[0], e[1], eyeSize * 0.5, 0, Math.PI * 2);
     ctx.fill();
   });
-
-  // 高光
   ctx.fillStyle = 'rgba(255,255,255,0.85)';
   [[-eyeSpread*0.9, eyeY - s*0.02], [-eyeSpread*0.35, eyeY - s*0.06],
    [eyeSpread*0.55, eyeY - s*0.06], [eyeSpread*1.1, eyeY - s*0.02]].forEach(function(e) {
@@ -847,8 +764,6 @@ function drawSpider(sp, time) {
     ctx.arc(e[0], e[1], eyeSize * 0.22, 0, Math.PI * 2);
     ctx.fill();
   });
-
-  // 后排小眼
   ctx.fillStyle = 'rgba(220,210,200,0.4)';
   [[-eyeSpread*0.7, eyeY + s*0.04], [eyeSpread*0.7, eyeY + s*0.04]].forEach(function(e) {
     ctx.beginPath();
@@ -861,7 +776,6 @@ function drawSpider(sp, time) {
     ctx.fillStyle = 'rgba(220,210,200,0.4)';
   });
 
-  // ── 螯肢（口器前方） ──
   ctx.fillStyle = darken(sp.bodyColor, 20);
   for (var side = -1; side <= 1; side += 2) {
     ctx.beginPath();
@@ -871,7 +785,6 @@ function drawSpider(sp, time) {
     ctx.fill();
   }
 
-  // ── 触肢 ──
   ctx.strokeStyle = sp.legColor;
   ctx.lineWidth = 0.6;
   for (var side = -1; side <= 1; side += 2) {
@@ -886,6 +799,300 @@ function drawSpider(sp, time) {
   }
 
   ctx.restore();
+}
+
+function drawTopSpider(sp, time, x, y, s, t, seed) {
+  ctx.save();
+  ctx.translate(x, y);
+
+  var dx = sp.targetX - sp.x;
+  var dy = sp.targetY - sp.y;
+  var angle;
+  if (dx*dx + dy*dy > 10) {
+    angle = Math.atan2(dy, dx);
+  } else {
+    angle = sp.topAngle || 0;
+  }
+  sp.topAngle = angle;
+  ctx.rotate(angle);
+
+  ctx.strokeStyle = 'rgba(200,190,180,0.05)';
+  ctx.lineWidth = 0.5;
+  for (var f = 0; f < 60; f++) {
+    var fa = Math.random() * Math.PI * 2;
+    var fd = 0.6 + Math.random() * 0.4;
+    var fx = Math.cos(fa) * s * 0.65 * fd;
+    var fy = s * 0.4 + Math.sin(fa) * s * 0.6 * fd;
+    var fl = s * (0.04 + Math.random() * 0.1);
+    var fang = Math.atan2(Math.sin(fa) * 0.6, Math.cos(fa) * 0.65) + (Math.random() - 0.5) * 0.6;
+    ctx.beginPath();
+    ctx.moveTo(fx, fy);
+    ctx.lineTo(fx + Math.cos(fang) * fl, fy + Math.sin(fang) * fl);
+    ctx.stroke();
+  }
+
+  ctx.beginPath();
+  var aPts = 20;
+  for (var i = 0; i <= aPts; i++) {
+    var ang = (i / aPts) * Math.PI * 2;
+    var rx = s * 0.62 + Math.sin(ang * 3 + seed) * s * 0.03;
+    var ry = s * 0.55 + Math.sin(ang * 4 + seed * 1.3) * s * 0.03;
+    var px = Math.cos(ang) * rx;
+    var py = s * 0.25 + Math.sin(ang) * ry;
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+  var grad = ctx.createRadialGradient(0, s*0.3, 0, 0, s*0.3, s*0.6);
+  grad.addColorStop(0, lighten(sp.abdomenColor, 25));
+  grad.addColorStop(0.5, sp.abdomenColor);
+  grad.addColorStop(1, darken(sp.abdomenColor, 35));
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  ctx.fillStyle = sp.markColor;
+  ctx.globalAlpha = 0.5;
+  ctx.beginPath();
+  ctx.ellipse(0, s*0.28, s*0.18, s*0.28, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.globalAlpha = 0.3;
+  ctx.beginPath();
+  ctx.ellipse(-s*0.2, s*0.15, s*0.08, s*0.1, -0.3, 0, Math.PI*2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(s*0.2, s*0.15, s*0.08, s*0.1, 0.3, 0, Math.PI*2);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+
+  ctx.strokeStyle = 'rgba(0,0,0,0.12)';
+  ctx.lineWidth = 0.7;
+  ctx.beginPath();
+  ctx.moveTo(0, s*0.0);
+  for (var mi = 0; mi <= 8; mi++) {
+    var my = (mi/8) * s*0.5;
+    var mx = Math.sin(mi * 2 + seed) * s * 0.04;
+    ctx.lineTo(mx, my + s*0.05);
+  }
+  ctx.stroke();
+
+  ctx.strokeStyle = 'rgba(200,190,180,0.04)';
+  ctx.lineWidth = 0.4;
+  for (var f3 = 0; f3 < 30; f3++) {
+    var fa3 = Math.random() * Math.PI * 2;
+    var fd3 = 0.7 + Math.random() * 0.3;
+    var fx3 = Math.cos(fa3) * s * 0.45 * fd3;
+    var fy3 = -s * 0.15 + Math.sin(fa3) * s * 0.4 * fd3;
+    var fl3 = s * (0.04 + Math.random() * 0.08);
+    var fang3 = Math.atan2(Math.sin(fa3) * 0.7, Math.cos(fa3)) + (Math.random() - 0.5) * 0.5;
+    ctx.beginPath();
+    ctx.moveTo(fx3, fy3);
+    ctx.lineTo(fx3 + Math.cos(fang3) * fl3, fy3 + Math.sin(fang3) * fl3);
+    ctx.stroke();
+  }
+
+  ctx.beginPath();
+  for (var i2 = 0; i2 <= aPts; i2++) {
+    var ang = (i2 / aPts) * Math.PI * 2;
+    var rx = s * 0.45 + Math.sin(ang * 2 + seed * 1.7) * s * 0.02;
+    var ry = s * 0.38 + Math.sin(ang * 3 + seed * 2.1) * s * 0.02;
+    var px = Math.cos(ang) * rx;
+    var py = -s * 0.15 + Math.sin(ang) * ry;
+    if (i2 === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+  var grad2 = ctx.createRadialGradient(0, -s*0.2, 0, 0, -s*0.15, s*0.4);
+  grad2.addColorStop(0, lighten(sp.bodyColor, 30));
+  grad2.addColorStop(0.5, sp.bodyColor);
+  grad2.addColorStop(1, darken(sp.bodyColor, 25));
+  ctx.fillStyle = grad2;
+  ctx.fill();
+
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  ctx.beginPath();
+  ctx.ellipse(-s*0.06, -s*0.22, s*0.16, s*0.12, -0.1, 0, Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle = darken(sp.bodyColor, 10);
+  ctx.beginPath();
+  ctx.ellipse(0, s * 0.05, s * 0.12, s * 0.06, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  var legPhase = sp.legPhase;
+  var legAngles = [-0.50, -0.20, 0.10, 0.45];
+
+  for (var side = -1; side <= 1; side += 2) {
+    for (var li = 0; li < 4; li++) {
+      var gait = Math.sin(legPhase + li * 0.8 + side * 0.3);
+      var lift = Math.max(0, Math.sin(legPhase + li * 0.8 + side * 0.3 + Math.PI * 0.3)) * 0.3;
+
+      var baseAngle = legAngles[li];
+      var seg1Len = s * (0.9 + li * 0.12);
+      var seg2Len = s * (0.8 + li * 0.1);
+      var seg3Len = s * (0.4 - li * 0.03);
+
+      var a1 = side * (baseAngle + gait * 0.1);
+      var s1x = side * s * 0.4;
+      var s1y = -s * 0.18 + li * s * 0.14;
+      var e1x = s1x + Math.cos(a1) * seg1Len;
+      var e1y = s1y + Math.sin(a1) * seg1Len;
+      var c1x = s1x + Math.cos(a1 - side * 0.2) * seg1Len * 0.5;
+      var c1y = s1y + Math.sin(a1 - side * 0.2) * seg1Len * 0.5;
+
+      var d1 = Math.atan2(e1y - s1y, e1x - s1x);
+      var a2 = side * (0.3 + gait * 0.08);
+      var e2x = e1x + Math.cos(d1 + a2) * seg2Len;
+      var e2y = e1y + Math.sin(d1 + a2) * seg2Len;
+      var c2x = e1x + Math.cos(d1 + a2 - side * 0.15) * seg2Len * 0.5;
+      var c2y = e1y + Math.sin(d1 + a2 - side * 0.15) * seg2Len * 0.5;
+
+      var d2 = Math.atan2(e2y - e1y, e2x - e1x);
+      var a3 = side * (0.3 - lift * 0.2);
+      var e3x = e2x + Math.cos(d2 + a3) * seg3Len;
+      var e3y = e2y + Math.sin(d2 + a3) * seg3Len;
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+      ctx.lineWidth = 3.0 - li * 0.15;
+      ctx.beginPath();
+      ctx.moveTo(s1x, s1y);
+      ctx.quadraticCurveTo(c1x, c1y, e1x, e1y);
+      ctx.stroke();
+      ctx.strokeStyle = sp.legColor;
+      ctx.lineWidth = 2.2 - li * 0.1;
+      ctx.beginPath();
+      ctx.moveTo(s1x, s1y);
+      ctx.quadraticCurveTo(c1x, c1y, e1x, e1y);
+      ctx.stroke();
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+      ctx.lineWidth = 2.2 - li * 0.1;
+      ctx.beginPath();
+      ctx.moveTo(e1x, e1y);
+      ctx.quadraticCurveTo(c2x, c2y, e2x, e2y);
+      ctx.stroke();
+      ctx.strokeStyle = sp.legColor;
+      ctx.lineWidth = 1.6 - li * 0.08;
+      ctx.beginPath();
+      ctx.moveTo(e1x, e1y);
+      ctx.quadraticCurveTo(c2x, c2y, e2x, e2y);
+      ctx.stroke();
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.02)';
+      ctx.lineWidth = 1.2 - li * 0.05;
+      ctx.beginPath();
+      ctx.moveTo(e2x, e2y);
+      ctx.lineTo(e3x, e3y);
+      ctx.stroke();
+      ctx.strokeStyle = sp.legColor;
+      ctx.lineWidth = 0.8 - li * 0.04;
+      ctx.beginPath();
+      ctx.moveTo(e2x, e2y);
+      ctx.lineTo(e3x, e3y);
+      ctx.stroke();
+
+      ctx.strokeStyle = 'rgba(200,190,180,0.12)';
+      for (var h = 0; h < 4 + li; h++) {
+        var frac = h / (4 + li);
+        var hx = s1x + (e1x - s1x) * frac;
+        var hy = s1y + (e1y - s1y) * frac;
+        var hAngle = a1 + (h % 2 === 0 ? 0.8 : -0.8) + Math.sin(t + h + seed) * 0.1;
+        var hLen = s * (0.03 + li * 0.01);
+        ctx.lineWidth = 0.25;
+        ctx.beginPath();
+        ctx.moveTo(hx, hy);
+        ctx.lineTo(hx + Math.cos(hAngle) * hLen, hy + Math.sin(hAngle) * hLen);
+        ctx.stroke();
+      }
+    }
+  }
+
+  var eyeSize = s * 0.05;
+  var eyeY = -s * 0.38;
+  ctx.fillStyle = 'rgba(220,210,200,0.85)';
+  [[-s*0.12, eyeY - s*0.02], [s*0.12, eyeY - s*0.02]].forEach(function(e) {
+    ctx.beginPath();
+    ctx.arc(e[0], e[1], eyeSize * 1.2, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  [[-s*0.28, eyeY], [s*0.28, eyeY]].forEach(function(e) {
+    ctx.beginPath();
+    ctx.arc(e[0], e[1], eyeSize, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.fillStyle = 'rgba(10,8,8,0.9)';
+  [[-s*0.12, eyeY - s*0.02], [s*0.12, eyeY - s*0.02],
+   [-s*0.28, eyeY], [s*0.28, eyeY]].forEach(function(e) {
+    ctx.beginPath();
+    ctx.arc(e[0], e[1], eyeSize * 0.5, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  ctx.fillStyle = 'rgba(220,210,200,0.5)';
+  [[-s*0.18, eyeY + s*0.04], [s*0.18, eyeY + s*0.04],
+   [-s*0.32, eyeY + s*0.03], [s*0.32, eyeY + s*0.03]].forEach(function(e) {
+    ctx.beginPath();
+    ctx.arc(e[0], e[1], eyeSize * 0.55, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(10,8,8,0.4)';
+    ctx.beginPath();
+    ctx.arc(e[0], e[1], eyeSize * 0.28, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(220,210,200,0.5)';
+  });
+
+  ctx.fillStyle = darken(sp.bodyColor, 20);
+  ctx.beginPath();
+  ctx.moveTo(0, -s*0.38);
+  ctx.quadraticCurveTo(-s*0.06, -s*0.48, 0, -s*0.50);
+  ctx.quadraticCurveTo(s*0.06, -s*0.48, 0, -s*0.38);
+  ctx.fill();
+
+  ctx.strokeStyle = sp.legColor;
+  ctx.lineWidth = 0.5;
+  for (var side = -1; side <= 1; side += 2) {
+    ctx.beginPath();
+    ctx.moveTo(side * s * 0.08, -s * 0.35);
+    ctx.quadraticCurveTo(side * s * 0.15, -s * 0.52, side * s * 0.04, -s * 0.58);
+    ctx.stroke();
+    ctx.fillStyle = sp.legColor;
+    ctx.beginPath();
+    ctx.arc(side * s * 0.04, -s * 0.58, s * 0.015, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.restore();
+}
+
+function drawSpider(sp, time) {
+  var x = sp.x, y = sp.y;
+  var s = 16 + sp.size * 6;
+  var t = time;
+  var seed = sp.phase;
+
+  if (sp.mode === 'hang') {
+    ctx.strokeStyle = 'rgba(210,200,190,0.4)';
+    ctx.lineWidth = 1.5 + sp.size * 0.4;
+    ctx.beginPath();
+    ctx.moveTo(sp.anchorX, sp.anchorY);
+    var midX = (sp.anchorX + x) / 2 + Math.sin(t * (0.3 + seed * 0.01) + seed) * (5 + sp.size * 5);
+    var midY = (sp.anchorY + y) / 2 - 5;
+    ctx.quadraticCurveTo(midX, midY, x, y - s * 0.2);
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(sp.anchorX + 1, sp.anchorY + 1);
+    ctx.quadraticCurveTo(midX + 2, midY + 2, x + 2, y - s * 0.2 + 1);
+    ctx.stroke();
+  }
+
+  if (sp.mode === 'hang') {
+    drawSideSpider(sp, time, x, y, s, t, seed);
+  } else {
+    drawTopSpider(sp, time, x, y, s, t, seed);
+  }
 }
 
 // 工具函数
