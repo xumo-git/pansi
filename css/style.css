@@ -1,0 +1,247 @@
+/* ============================================
+   盘丝洞 · 三书门户
+   暗紫盘丝 · 神秘中国风
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Inter:wght@300;400;500&display=swap');
+
+:root {
+  --bg: #0a080a;
+  --bg-card: #121012;
+  --bg-hover: #1c181c;
+  --text: #e8e0e8;
+  --text-dim: #a898a8;
+  --text-muted: #786878;
+  --gold: #c9a96e;
+  --gold-light: #dcc082;
+  --gold-dim: #8a7530;
+  --border: #242024;
+  --border-light: #383038;
+  --font-serif: 'Noto Serif SC', 'Songti SC', 'STSong', serif;
+  --font-sans: 'Inter', 'PingFang SC', -apple-system, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-serif);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── 背景装饰 ─────────────────────────── */
+
+.bg-ornament {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(88, 20, 80, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(60, 40, 80, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(40, 20, 60, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── 顶部 Hero ─────────────────────────── */
+
+.hero {
+  text-align: center;
+  padding: 100px 20px 60px;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.6;
+  filter: grayscale(0.3);
+}
+
+.hero h1 {
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: 16px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+}
+
+.hero-sub {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.hero-divider {
+  font-size: 14px;
+  letter-spacing: 8px;
+  color: var(--gold-dim);
+  margin-bottom: 20px;
+}
+
+.hero-desc {
+  font-size: 15px;
+  color: var(--text-dim);
+  line-height: 2;
+  font-family: var(--font-sans);
+}
+
+/* ─── 三书卡片 ─────────────────────────── */
+
+.books {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 20px 20px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.book-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.35s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.book-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--card-accent);
+  opacity: 0.6;
+  transition: opacity 0.3s;
+}
+
+.book-card:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+.book-card:hover::before {
+  opacity: 1;
+}
+
+.card-number {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--card-accent);
+  opacity: 0.5;
+  line-height: 1;
+  flex-shrink: 0;
+  min-width: 32px;
+  transition: opacity 0.3s;
+}
+
+.book-card:hover .card-number {
+  opacity: 0.8;
+}
+
+.card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-content h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--card-accent);
+  margin-bottom: 2px;
+  letter-spacing: 2px;
+}
+
+.card-subtitle {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.card-desc {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.8;
+  margin-bottom: 12px;
+  font-family: var(--font-sans);
+}
+
+.card-link {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--card-accent);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: gap 0.2s;
+}
+
+.book-card:hover .card-link {
+  gap: 8px;
+}
+
+/* ─── 页脚 ─────────────────────────────── */
+
+.footer {
+  text-align: center;
+  padding: 40px 20px 60px;
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.footer .author {
+  color: var(--gold-dim);
+}
+
+.footer-meta {
+  font-size: 11px;
+  margin-top: 4px;
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+/* ─── 响应式 ─────────────────────────────── */
+
+@media (max-width: 600px) {
+  .hero { padding: 60px 20px 40px; }
+  .hero h1 { font-size: 32px; letter-spacing: 10px; }
+  .book-card { padding: 18px; gap: 14px; }
+  .card-content h2 { font-size: 18px; }
+  .card-number { font-size: 22px; min-width: 24px; }
+  .card-desc { font-size: 13px; }
+}
