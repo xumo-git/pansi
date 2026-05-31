@@ -250,52 +250,99 @@ function resize() {
 resize();
 window.addEventListener('resize', resize);
 
-/* ── 蛛丝（垂丝 + 横向走丝） ── */
-var threads = [];
+/* ── 蛛网 ── */
+var webs = [];
 
-function initThreads() {
-  threads = [];
-  // 几条从顶部垂下的丝
-  var count = 3 + Math.floor(Math.random() * 3);
-  for (var i = 0; i < count; i++) {
-    var x = 30 + Math.random() * (W - 60);
-    var y = Math.random() * H * 0.3;
-    threads.push({
-      x1: x, y1: 0,
-      x2: x + (Math.random() - 0.5) * 40,
-      y2: y,
-      swaySpeed: 0.3 + Math.random() * 0.5,
-      swayPhase: Math.random() * Math.PI * 2
-    });
-  }
-  // 几条横向的丝（连接垂丝）
-  for (var i = 0; i < count * 2; i++) {
-    var idx1 = Math.floor(Math.random() * threads.length);
-    var idx2 = Math.floor(Math.random() * threads.length);
-    if (idx1 === idx2) continue;
-    var t1 = threads[idx1], t2 = threads[idx2];
-    var frac1 = 0.2 + Math.random() * 0.6;
-    var frac2 = 0.2 + Math.random() * 0.6;
-    threads.push({
-      x1: t1.x1 + (t1.x2 - t1.x1) * frac1,
-      y1: t1.y1 + (t1.y2 - t1.y1) * frac1,
-      x2: t2.x1 + (t2.x2 - t2.x1) * frac2,
-      y2: t2.y1 + (t2.y2 - t2.y1) * frac2,
-      swaySpeed: 0.2 + Math.random() * 0.4,
-      swayPhase: Math.random() * Math.PI * 2
-    });
+function initWebs() {
+  webs = [];
+  // 角落蛛网
+  var corners = [
+    [0, 0, 1, 1], [W, 0, -1, 1],
+    [0, H, 1, -1], [W, H, -1, -1]
+  ];
+  // 选2-3个角落做网
+  var picked = corners.sort(function() { return Math.random() - 0.5; }).slice(0, 2 + Math.floor(Math.random() * 2));
+  picked.forEach(function(c) {
+    webs.push(makeWeb(c[0], c[1], c[2], c[3]));
+  });
+  // 再加1-2个边缘网
+  var edgeCount = 1 + Math.floor(Math.random() * 2);
+  for (var i = 0; i < edgeCount; i++) {
+    if (Math.random() < 0.5) {
+      webs.push(makeWeb(Math.random() * W, 0, (Math.random()-0.5)*2, 1));
+    } else {
+      webs.push(makeWeb(Math.random() * W, H, (Math.random()-0.5)*2, -1));
+    }
   }
 }
 
-function drawThreads(time) {
-  threads.forEach(function(t) {
-    var sway = Math.sin(time * t.swaySpeed + t.swayPhase) * 2;
-    ctx.strokeStyle = 'rgba(200,190,170,0.06)';
-    ctx.lineWidth = 0.5;
-    ctx.beginPath();
-    ctx.moveTo(t.x1 + sway, t.y1 + sway * 0.5);
-    ctx.lineTo(t.x2 + sway, t.y2 + sway * 0.5);
-    ctx.stroke();
+function makeWeb(ax, ay, dx, dy) {
+  var radials = 6 + Math.floor(Math.random() * 5);
+  var rings = 4 + Math.floor(Math.random() * 3);
+  var spread = 60 + Math.random() * 150;
+  var swayPhase = Math.random() * Math.PI * 2;
+  var swaySpeed = 0.15 + Math.random() * 0.25;
+  var radialAngles = [];
+  var baseAngle = Math.atan2(dy, dx) - 0.5 + Math.random() * 1.0;
+  for (var i = 0; i < radials; i++) {
+    radialAngles.push(baseAngle + (i / (radials - 1) - 0.5) * 1.0 + (Math.random() - 0.5) * 0.15);
+  }
+  return { ax: ax, ay: ay, radials: radialAngles, rings: rings, spread: spread, swayPhase: swayPhase, swaySpeed: swaySpeed };
+}
+
+function drawWebs(time) {
+  webs.forEach(function(w) {
+    var sway = Math.sin(time * w.swaySpeed + w.swayPhase) * 2;
+    var cx = w.ax + sway;
+    var cy = w.ay + sway * 0.5;
+    var rad = w.radials;
+    var n = rad.length;
+    var alpha = 0.08 + Math.random() * 0.04;
+
+    // 辐射丝
+    ctx.strokeStyle = 'rgba(200,185,160,' + (alpha + 0.02) + ')';
+    ctx.lineWidth = 0.6;
+    for (var i = 0; i < n; i++) {
+      var angle = rad[i];
+      var ex = cx + Math.cos(angle) * w.spread;
+      var ey = cy + Math.sin(angle) * w.spread;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(ex, ey);
+      ctx.stroke();
+    }
+
+    // 螺旋圈
+    ctx.strokeStyle = 'rgba(200,185,160,' + alpha + ')';
+    ctx.lineWidth = 0.4;
+    for (var ri = 1; ri <= w.rings; ri++) {
+      var ringR = (ri / w.rings) * w.spread;
+      ctx.beginPath();
+      for (var i = 0; i <= n; i++) {
+        var idx = i % n;
+        var a = rad[idx] + sway * 0.001;
+        var px = cx + Math.cos(a) * (ringR + Math.sin(time * 0.3 + idx) * 1.5);
+        var py = cy + Math.sin(a) * (ringR + Math.cos(time * 0.3 + idx) * 1.5);
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+    }
+
+    // 散落丝
+    ctx.strokeStyle = 'rgba(200,185,160,' + (alpha * 0.5) + ')';
+    ctx.lineWidth = 0.3;
+    for (var i = 0; i < 4; i++) {
+      var si = Math.floor(Math.random() * n);
+      var sa = rad[si];
+      var sx = cx + Math.cos(sa) * w.spread * (0.3 + Math.random() * 0.5);
+      var sy = cy + Math.sin(sa) * w.spread * (0.3 + Math.random() * 0.5);
+      var drop = 15 + Math.random() * 30;
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      ctx.quadraticCurveTo(sx + (Math.random()-0.5)*20, sy + drop, sx + (Math.random()-0.5)*30, sy + drop + 8);
+      ctx.stroke();
+    }
   });
 }
 
@@ -648,22 +695,42 @@ function drawSpider(sp, time) {
 
       // ── 画腿（用贝塞尔曲线） ──
       // 股节（最粗）
+      ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+      ctx.lineWidth = 4.0 - li * 0.2;
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.quadraticCurveTo(fCpx, fCpy, fEndX, fEndY);
+      ctx.stroke();
       ctx.strokeStyle = sp.legColor;
-      ctx.lineWidth = 2.0 - li * 0.1;
+      ctx.lineWidth = 3.0 - li * 0.15;
       ctx.beginPath();
       ctx.moveTo(startX, startY);
       ctx.quadraticCurveTo(fCpx, fCpy, fEndX, fEndY);
       ctx.stroke();
 
       // 胫节
-      ctx.lineWidth = 1.5 - li * 0.1;
+      ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+      ctx.lineWidth = 3.0 - li * 0.15;
+      ctx.beginPath();
+      ctx.moveTo(fEndX, fEndY);
+      ctx.quadraticCurveTo(tCpx, tCpy, tEndX, tEndY);
+      ctx.stroke();
+      ctx.strokeStyle = sp.legColor;
+      ctx.lineWidth = 2.2 - li * 0.12;
       ctx.beginPath();
       ctx.moveTo(fEndX, fEndY);
       ctx.quadraticCurveTo(tCpx, tCpy, tEndX, tEndY);
       ctx.stroke();
 
       // 跗节（最细）
-      ctx.lineWidth = 0.8 - li * 0.05;
+      ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+      ctx.lineWidth = 1.5 - li * 0.08;
+      ctx.beginPath();
+      ctx.moveTo(tEndX, tEndY);
+      ctx.lineTo(mEndX, mEndY);
+      ctx.stroke();
+      ctx.strokeStyle = sp.legColor;
+      ctx.lineWidth = 1.2 - li * 0.06;
       ctx.beginPath();
       ctx.moveTo(tEndX, tEndY);
       ctx.lineTo(mEndX, mEndY);
@@ -805,7 +872,7 @@ function darken(hex, amt) {
 /* ── 主循环 ── */
 
 function init() {
-  initThreads();
+  initWebs();
   initSpiders();
 }
 
@@ -813,7 +880,7 @@ function loop(timestamp) {
   var time = timestamp * 0.001;
   ctx.clearRect(0, 0, W, H);
 
-  drawThreads(time);
+  drawWebs(time);
   updateSpiders();
   spiders.forEach(function(sp) {
     drawSpider(sp, time);
@@ -827,7 +894,7 @@ requestAnimationFrame(loop);
 
 window.addEventListener('resize', function() {
   setTimeout(function() {
-    initThreads();
+    initWebs();
     initSpiders();
   }, 200);
 });
