@@ -250,6 +250,18 @@ function resize() {
 resize();
 window.addEventListener('resize', resize);
 
+// ── 鼠标追踪 ──
+var mouseX = -999, mouseY = -999;
+var mouseActive = false;
+document.addEventListener('mousemove', function(e) {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+  mouseActive = true;
+});
+document.addEventListener('mouseleave', function() {
+  mouseActive = false;
+});
+
 /* ── 蛛网 ── */
 var webs = [];
 
@@ -297,11 +309,11 @@ function drawWebs(time) {
     var cy = w.ay + sway * 0.5;
     var rad = w.radials;
     var n = rad.length;
-    var alpha = 0.08 + Math.random() * 0.04;
+    var alpha = 0.25 + Math.random() * 0.08;
 
     // 辐射丝
-    ctx.strokeStyle = 'rgba(200,185,160,' + (alpha + 0.02) + ')';
-    ctx.lineWidth = 0.6;
+    ctx.strokeStyle = 'rgba(210,200,190,' + (alpha + 0.05) + ')';
+    ctx.lineWidth = 1.2;
     for (var i = 0; i < n; i++) {
       var angle = rad[i];
       var ex = cx + Math.cos(angle) * w.spread;
@@ -313,8 +325,8 @@ function drawWebs(time) {
     }
 
     // 螺旋圈
-    ctx.strokeStyle = 'rgba(200,185,160,' + alpha + ')';
-    ctx.lineWidth = 0.4;
+    ctx.strokeStyle = 'rgba(210,200,190,' + alpha + ')';
+    ctx.lineWidth = 0.9;
     for (var ri = 1; ri <= w.rings; ri++) {
       var ringR = (ri / w.rings) * w.spread;
       ctx.beginPath();
@@ -330,8 +342,8 @@ function drawWebs(time) {
     }
 
     // 散落丝
-    ctx.strokeStyle = 'rgba(200,185,160,' + (alpha * 0.5) + ')';
-    ctx.lineWidth = 0.3;
+    ctx.strokeStyle = 'rgba(210,200,190,' + (alpha * 0.6) + ')';
+    ctx.lineWidth = 0.7;
     for (var i = 0; i < 4; i++) {
       var si = Math.floor(Math.random() * n);
       var sa = rad[si];
@@ -466,6 +478,34 @@ function updateSpiders() {
       }
     }
 
+    // ── 鼠标惊逃 ──
+    if (mouseActive) {
+      var mdx = sp.x - mouseX;
+      var mdy = sp.y - mouseY;
+      var mDist = Math.sqrt(mdx*mdx + mdy*mdy);
+      if (mDist < 180) {
+        sp.state = 'escape';
+        sp.stateTimer = 0.8 + Math.random() * 0.5;
+        // 朝鼠标反方向荡
+        var escapeAngle = Math.atan2(mdy, mdx);
+        if (sp.anchorY < 0) {
+          // 挂在顶上就快速收丝
+          sp.targetLen = Math.max(30, sp.threadLen * 0.3);
+        }
+      }
+    }
+
+    if (sp.state === 'escape') {
+      sp.threadLen *= 0.97;
+      sp.angle += Math.sin(t * 2 + sp.phase) * 0.02;
+      sp.legPhase += 0.3;
+      sp.stateTimer -= 0.016;
+      if (sp.stateTimer <= 0 || sp.threadLen < 40) {
+        sp.state = 'swing';
+        sp.stateTimer = 3 + Math.random() * 3;
+      }
+    }
+
     // 限位
     sp.threadLen = Math.max(30, Math.min(H * 0.9, sp.threadLen));
 
@@ -483,8 +523,8 @@ function drawSpider(sp, time) {
   var seed = sp.phase;
 
   // ── 蛛丝 ──
-  ctx.strokeStyle = 'rgba(200,190,180,0.1)';
-  ctx.lineWidth = 0.4 + sp.size * 0.2;
+  ctx.strokeStyle = 'rgba(210,200,190,0.3)';
+  ctx.lineWidth = 1.2 + sp.size * 0.3;
   ctx.beginPath();
   ctx.moveTo(sp.anchorX, sp.anchorY);
   var midX = (sp.anchorX + x) / 2 + Math.sin(t * (0.3 + seed * 0.01) + seed) * (5 + sp.size * 5);
@@ -493,8 +533,8 @@ function drawSpider(sp, time) {
   ctx.stroke();
 
   // 丝的反光
-  ctx.strokeStyle = 'rgba(255,255,255,0.03)';
-  ctx.lineWidth = 0.2;
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.lineWidth = 0.6;
   ctx.beginPath();
   ctx.moveTo(sp.anchorX + 1, sp.anchorY + 1);
   ctx.quadraticCurveTo(midX + 2, midY + 2, x + 2, y - s * 0.2 + 1);
