@@ -196,18 +196,8 @@
   </div>
 
   <div class="books">
-    <a href="xunxui/" class="book-card">
-      <div class="card-number">壹</div>
-      <div class="card-content">
-        <h2>驯蕊</h2>
-        <p class="card-subtitle">XunRui · 心理救赎</p>
-        <p class="card-desc">两个人的相遇，是从一把反了的锁开始的。槐序与蕊，在绳索与信任之间，寻找彼此的边界。</p>
-        <span class="card-link">阅读 →</span>
-      </div>
-    </a>
-
     <a href="yuantiang/" class="book-card">
-      <div class="card-number">贰</div>
+      <div class="card-number">壹</div>
       <div class="card-content">
         <h2>我真是袁天罡</h2>
         <p class="card-subtitle">I Am Yuan Tiangang · 底层爬升</p>
@@ -217,11 +207,21 @@
     </a>
 
     <a href="tianming59/" class="book-card">
-      <div class="card-number">叁</div>
+      <div class="card-number">贰</div>
       <div class="card-content">
         <h2>天命五九</h2>
         <p class="card-subtitle">59th Year of Destiny · 杏林春暖</p>
         <p class="card-desc">五十九岁那年，倪海先生走进了一座山。再出来时，世界已经不认识他了。一个过期的人，一张过期的证件，走在一条他完全不认识的路上。</p>
+        <span class="card-link">阅读 →</span>
+      </div>
+    </a>
+
+    <a href="xunxui/" class="book-card">
+      <div class="card-number">叁</div>
+      <div class="card-content">
+        <h2>驯蕊</h2>
+        <p class="card-subtitle">XunRui · 心理救赎</p>
+        <p class="card-desc">两个人的相遇，是从一把反了的锁开始的。槐序与蕊，在绳索与信任之间，寻找彼此的边界。</p>
         <span class="card-link">阅读 →</span>
       </div>
     </a>
@@ -309,7 +309,7 @@ function drawWebs(time) {
     var cy = w.ay + sway * 0.5;
     var rad = w.radials;
     var n = rad.length;
-    var alpha = 0.25 + Math.random() * 0.08;
+    var alpha = 0.35 + Math.random() * 0.1;
 
     // 辐射丝
     ctx.strokeStyle = 'rgba(210,200,190,' + (alpha + 0.05) + ')';
@@ -377,7 +377,7 @@ var SPIDER_PALETTES = [
 function createSpider() {
   var pal = SPIDER_PALETTES[Math.floor(Math.random() * SPIDER_PALETTES.length)];
   return {
-    size: 0.6 + Math.random() * 0.8,
+    size: 1.0 + Math.random() * 1.2,
     phase: Math.random() * 100,
     legPhase: 0,
     anchorX: 20 + Math.random() * (W - 40),
@@ -399,7 +399,7 @@ function createSpider() {
 
 function initSpiders() {
   spiders = [];
-  var count = 5 + Math.floor(Math.random() * 4);
+    var count = 8 + Math.floor(Math.random() * 5);
   for (var i = 0; i < count; i++) {
     var sp = createSpider();
     sp.targetLen = sp.threadLen;
@@ -518,13 +518,13 @@ function updateSpiders() {
 
 function drawSpider(sp, time) {
   var x = sp.x, y = sp.y;
-  var s = 14 + sp.size * 5;
+  var s = 16 + sp.size * 6;
   var t = time;
   var seed = sp.phase;
 
   // ── 蛛丝 ──
-  ctx.strokeStyle = 'rgba(210,200,190,0.3)';
-  ctx.lineWidth = 1.2 + sp.size * 0.3;
+  ctx.strokeStyle = 'rgba(210,200,190,0.4)';
+  ctx.lineWidth = 1.5 + sp.size * 0.4;
   ctx.beginPath();
   ctx.moveTo(sp.anchorX, sp.anchorY);
   var midX = (sp.anchorX + x) / 2 + Math.sin(t * (0.3 + seed * 0.01) + seed) * (5 + sp.size * 5);
@@ -533,8 +533,8 @@ function drawSpider(sp, time) {
   ctx.stroke();
 
   // 丝的反光
-  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-  ctx.lineWidth = 0.6;
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+  ctx.lineWidth = 0.8;
   ctx.beginPath();
   ctx.moveTo(sp.anchorX + 1, sp.anchorY + 1);
   ctx.quadraticCurveTo(midX + 2, midY + 2, x + 2, y - s * 0.2 + 1);
