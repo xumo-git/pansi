@@ -329,18 +329,43 @@ def generate_chapter(num: int, novel: dict, nav_prev: str, nav_next: str) -> str
         footer=novel["footer"],
     )
 
-# ── 主流程 ──
-def main():
-    do_sync = "--sync" in sys.argv
-    do_push = "--push" in sys.argv
-    all_new = []
+# ── 交互式菜单 ──
+def interactive_menu():
+    print("=" * 50)
+    print("  盘丝洞部署 v2.1")
+    print("=" * 50)
+    print()
+    print("操作模式：")
+    print("  [1] 本地同步（盘丝洞 MD → 本地网站）")
+    print("  [2] GitHub 推送（本地 → GitHub）")
+    print("  [3] 全流程（1 + 2）")
+    mode = input("请输入 [1/2/3]: ").strip()
+    while mode not in ("1", "2", "3"):
+        mode = input("请重新输入 [1/2/3]: ").strip()
+    mode = int(mode)
 
+    print()
+    print("同步范围：")
+    print("  [1] 更新（对比差异，仅更新缺失/变更章节）")
+    print("  [2] 全量（不对比，直接全部替换）")
+    scope = input("请输入 [1/2]: ").strip()
+    while scope not in ("1", "2"):
+        scope = input("请重新输入 [1/2]: ").strip()
+    scope = int(scope)
+
+    print()
+    return mode, scope
+
+
+# ── 本地同步：更新（对比缺失章节） ──
+def local_sync_update():
+    """对比源MD与本地HTML，仅生成缺失章节。"""
+    any_missing = False
     for novel in NOVELS:
         source_dir, target_dir = novel["source_dir"], novel["target_dir"]
         prefix, ext = novel["prefix"], novel["ext"]
-
-        if not source_dir.exists(): print(f"[!] 源目录不存在: {source_dir}"); continue
-        if not target_dir.exists(): print(f"[!] 目标目录不存在: {target_dir}"); continue
+        if not source_dir.exists() or not target_dir.exists():
+            continue
 
         source_files = {}
         for f in source_dir.glob("*.md"):
@@ -352,79 +377,152 @@ def main():
         existing = set()
         file_num = novel.get("file_num", str)
         for f in target_dir.glob(f"{prefix}*{ext}"):
-            # match both zero-padded and non-padded
-            pat = rf"{re.escape(prefix)}(\d+){re.escape(ext)}"
-            m = re.search(pat, f.name)
+            m = re.search(rf"{re.escape(prefix)}(\d+){re.escape(ext)}", f.name)
             if m: existing.add(int(m.group(1)))
 
         missing = sorted(set(source_files.keys()) - existing)
-
         if not missing:
-            print(f"[{novel['id']}] 全部完整（{len(source_files)} 章）")
+            print(f"[{novel['id']}] ✅ 全部完整（{len(source_files)} 章）")
+            continue
+
+        any_missing = True
+        print(f"\n[{novel['id']}] 缺 {len(missing)} 章: {missing}")
+        all_titles = get_chapter_titles(novel)
+        for m in missing:
+            if m not in all_titles:
+                all_titles[m] = novel["parse_file"](source_files[m].name)[1]
+
+        for num in missing:
+            nav_prev, nav_next = build_nav(num, novel, all_titles)
+            html = generate_chapter(num, novel, nav_prev, nav_next)
+            if html is None:
+                print(f"  [!] 无法生成 {prefix}{file_num(num)}{ext}")
+                continue
+            fpath = target_dir / f"{prefix}{file_num(num)}{ext}"
+            fpath.write_text(html, encoding="utf-8")
+            print(f"  ✓ {fpath.name}")
+
+    if not any_missing:
+        print("\n✅ 所有章节已完整，无需更新")
+
+
+# ── 本地同步：全量（全部重生成） ──
+def local_sync_full():
+    """清空本地章节HTML，全部重新生成。"""
+    for novel in NOVELS:
+        source_dir, target_dir = novel["source_dir"], novel["target_dir"]
+        if not source_dir.exists() or not target_dir.exists():
+            continue
+
+        source_files = {}
+        for f in sorted(source_dir.glob("*.md")):
+            try:
+                num, title = novel["parse_file"](f.name)
+                source_files[num] = f
+            except: continue
+        if not source_files: continue
+
+        prefix, ext = novel["prefix"], novel["ext"]
+        file_num = novel.get("file_num", str)
+        all_titles = {}
+
+        for num, f in source_files.items():
+            md_text = f.read_text(encoding="utf-8")
+            title = extract_zh_title(md_text) or novel["parse_file"](f.name)[1]
+            all_titles[num] = title
+
+        # 清理旧文件
+        for f in target_dir.glob(f"{prefix}*{ext}"):
+            f.unlink()
+            print(f"  ✗ 删除旧文件: {f.name}")
+
+        print(f"\n[{novel['id']}] 全量生成 {len(source_files)} 章...")
+        for num in sorted(source_files.keys()):
+            nav_prev, nav_next = build_nav(num, novel, all_titles)
+            html = generate_chapter(num, novel, nav_prev, nav_next)
+            if html is None:
+                print(f"  [!] 无法生成 {prefix}{file_num(num)}{ext}")
+                continue
+            fpath = target_dir / f"{prefix}{file_num(num)}{ext}"
+            fpath.write_text(html, encoding="utf-8")
+            print(f"  ✓ {fpath.name}")
+
+
+# ── GitHub 推送 ──
+def git_push(force=False):
+    print("推送至 GitHub...\n")
+    status = subprocess.run(
+        ["git", "-C", str(REPO), "status", "--porcelain"],
+        capture_output=True, text=True
+    )
+    if not status.stdout.strip():
+        print("无变更，无需推送")
+        return
+
+    subprocess.run(["git", "-C", str(REPO), "add", "-A"])
+    r = subprocess.run(
+        ["git", "-C", str(REPO), "commit", "-m", "sync: 自动同步章节内容 from 盘丝洞"],
+        capture_output=True, text=True
+    )
+    if r.returncode != 0 and "nothing to commit" not in r.stderr:
+        print(f"[!] commit 失败: {r.stderr}")
+        return
+
+    cmd = ["git", "-C", str(REPO), "push"]
+    if force:
+        cmd.append("--force")
+        print("  全量模式：force push...")
+
+    r = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+    if r.returncode != 0:
+        print(f"[!] push 失败: {r.stderr}")
+    else:
+        print("✓ 已推送至 GitHub")
+
+
+# ── 主流程 ──
+def main():
+    is_interactive = "--interactive" in sys.argv or not any(
+        a in sys.argv for a in ("--sync", "--push", "--full")
+    )
+
+    if is_interactive:
+        mode, scope = interactive_menu()
+        do_sync = mode in (1, 3)
+        do_push = mode in (2, 3)
+        do_full = scope == 2
+    else:
+        do_sync = "--sync" in sys.argv
+        do_push = "--push" in sys.argv
+        do_full = "--full" in sys.argv
+
+    # ── 本地同步 ──
+    if do_sync:
+        print("=" * 50)
+        print("  本地同步：盘丝洞 MD → 本地网站")
+        print("=" * 50)
+        print()
+
+        if do_full:
+            print("▶ 全量模式：清空旧文件，全部重新生成\n")
+            local_sync_full()
         else:
-            print(f"[{novel['id']}] 缺 {len(missing)} 章: {missing}")
-            if do_sync:
-                all_new.append((novel, missing, source_files))
-            else:
-                for m in missing:
-                    print(f"    - {source_files[m].name}")
+            print("▶ 更新模式：对比源MD与本地HTML，仅补充缺失章节\n")
+            local_sync_update()
 
-    if do_sync and all_new:
-        print("\n" + "=" * 50)
-        print("生成缺失章节 HTML...\n")
-
-        for novel, missing, source_files in all_new:
-            all_titles = get_chapter_titles(novel)
-            for m in missing:
-                if m not in all_titles:
-                    all_titles[m] = novel["parse_file"](source_files[m].name)[1]
-
-            prefix, ext = novel["prefix"], novel["ext"]
-            file_num = novel.get("file_num", str)
-            target_dir = novel["target_dir"]
-
-            for num in missing:
-                nav_prev, nav_next = build_nav(num, novel, all_titles)
-                html = generate_chapter(num, novel, nav_prev, nav_next)
-                if html is None:
-                    print(f"  [!] 无法生成 {prefix}{file_num(num)}{ext}")
-                    continue
-                fpath = target_dir / f"{prefix}{file_num(num)}{ext}"
-                fpath.write_text(html, encoding="utf-8")
-                print(f"  ✓ {fpath.name}")
-
-        total = sum(len(m) for _, m, _ in all_new)
-        print(f"\n共生成 {total} 个 HTML 文件")
-
+    # ── GitHub 推送 ──
     if do_push:
-        print("\n" + "=" * 50)
-        print("推送至 GitHub...\n")
-
-        status = subprocess.run(
-            ["git", "-C", str(REPO), "status", "--porcelain"],
-            capture_output=True, text=True
-        )
-        if not status.stdout.strip():
-            print("无变更，无需推送")
-            return
-
-        subprocess.run(["git", "-C", str(REPO), "add", "-A"])
-        r = subprocess.run(
-            ["git", "-C", str(REPO), "commit", "-m", "sync: 自动同步章节内容 from 盘丝洞"],
-            capture_output=True, text=True
-        )
-        if r.returncode != 0 and "nothing to commit" not in r.stderr:
-            print(f"[!] commit 失败: {r.stderr}")
-            return
-
-        r = subprocess.run(
-            ["git", "-C", str(REPO), "push"],
-            capture_output=True, text=True, timeout=60
-        )
-        if r.returncode != 0:
-            print(f"[!] push 失败: {r.stderr}")
+        print()
+        print("=" * 50)
+        print("  GitHub 推送")
+        if do_full:
+            print("  （全量模式：force push 覆盖远端）")
         else:
-            print("✓ 已推送至 GitHub")
+            print("  （更新模式：仅推送本地变更）")
+        print("=" * 50)
+        print()
+
+        git_push(force=do_full)
 
 if __name__ == "__main__":
     main()
