@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>第三十七章 · 饭桌 · 天命五九</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div id="reading-progress"></div>
+
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="index.html">← 目录</a>
+    <span class="nav-title">天命五九</span>
+    <div class="reading-controls">
+      <button id="font-dec" title="减小字号">A−</button>
+      <span class="font-size-label" id="font-label">18</span>
+      <button id="font-inc" title="增大字号">A+</button>
+    </div>
+  </div>
+</nav>
+
+<div class="chapter-wrapper">
+  <div class="chapter-title">
+    <div class="ch-label">— 第三十七章 —</div>
+    <h1>饭桌</h1>
+  </div>
+
+  <div class="chapter-content">
+
+<p>
+灶房里，粥咕嘟咕嘟地冒着泡。
+</p>
+<p>
+九翁把火拧小了，拿勺子搅了两下。白米粥，不稠不稀，刚好挂勺——他在紫薇的时候就知道，晚饭吃粥，胃里不积食，第二天晨脉会比吃饭的稳三分。
+</p>
+<p>
+窗外天已经黑透了。虫子在墙根底下叫着，声音不大，稀稀落落的——天凉了，虫也少了。灶台的煤油灯把九翁的影子投在土墙上，一晃一晃的。
+</p>
+<p>
+他正要把粥从火上端下来，听见院门响了。
+</p>
+<p>
+不是敲门。是有人推开半掩的院门走进来的脚步声——鞋底蹭着泥地，不重，但也不轻。九翁没回头，把粥锅端到灶台边上。
+</p>
+<p>
+"九翁。"
+</p>
+<p>
+年轻人的声音从灶房门口传来。九翁转过头，看见他端着一口碗站在门框下，碗里盛了半碗卤豆干。煤油灯的光照在他脸上，脸上没什么特别的表忄青——但也不是刚来村子时那种空白的脸了。
+</p>
+<p>
+"我爸让我叫你过去一块儿吃。"
+</p>
+<p>
+九翁看了看自己那锅白粥，又看了看年轻人碗里的卤豆干。
+</p>
+<p>
+"你爸卤的？"
+</p>
+<p>
+"嗯。"
+</p>
+<p>
+九翁把围裙解下来，搭在灶台边上。
+</p>
+<p>
+"走吧。"
+</p>
+<hr>
+<p>
+<em>更新于 2026-06-07 21:00 | 广州</em>
+</p>
+<div class="author-note">
+<strong>盘丝吐槽：这一章写得我胃里堵了一块东西——不是难过，是老刘夹肉的筷子尖上那点说不出口的"谢谢你"。三个男人吃顿饭，话加起来不超过二十句，但桌上的卤豆干、红烧肉、满杯茶和铝皮灯罩把该说的全说了。老刘那句"够晚了"是全书至今他说的最有分量的一句话——不是催人走，是把这一天画上了句号。本周收束收得干净：年轻人的线落到饭桌上，老刘的线落到一句"好"上，九翁回到灶房，灯灭了，虫还在叫。饭桌是中医里的"和"——五味调和、阴阳并补，在这一章里变成了三个碗、四碟菜、一盏晃动的灯。</strong>
+</div>
+
+  </div>
+
+  <div class="chapter-end">
+    <span class="end-ornament">✦ ✦ ✦</span>
+    天命五九 · 第三十七章
+  </div>
+
+  <nav class="chapter-nav">
+    <div class="nav-left"><a href="chapter-36.html">← 晒药</a></div>
+    <div class="nav-center">
+      <a href="index.html">☰ 目录</a>
+    </div>
+    <div class="nav-right"></div>
+  </nav>
+</div>
+
+<div id="tts-bar">
+  <div class="tts-inner">
+    <button id="tts-play">▶ 朗读本章</button>
+    <button id="tts-pause" style="display:none;">⏸ 暂停</button>
+    <button id="tts-stop" style="display:none;">⏹ 停止</button>
+    <select id="tts-rate">
+      <option value="0.8">慢速</option>
+      <option value="1" selected>正常</option>
+      <option value="1.2">快速</option>
+    </select>
+  </div>
+</div>
+
+<footer class="site-footer"><span class="author">盘丝墨痕</span> · 天命五九 · 杏林春暖</footer>
+
+<script>
+(function(){
+var h=document.documentElement;
+window.addEventListener('scroll',function(){
+var p=(h.scrollTop-h.clientTop)/(h.scrollHeight-h.clientHeight)*100;
+document.getElementById('reading-progress').style.width=Math.min(p,100)+'%';
+});
+var sz=18,content=document.querySelector('.chapter-content'),label=document.getElementById('font-label');
+document.getElementById('font-inc').addEventListener('click',function(){if(sz<24){sz+=1;content.style.fontSize=sz+'px';label.textContent=sz;}});
+document.getElementById('font-dec').addEventListener('click',function(){if(sz>14){sz-=1;content.style.fontSize=sz+'px';label.textContent=sz;}});
+var bar=document.getElementById('tts-bar'),playBtn=document.getElementById('tts-play'),pauseBtn=document.getElementById('tts-pause'),stopBtn=document.getElementById('tts-stop'),rateSelect=document.getElementById('tts-rate'),utt=null,paused=false;
+function getText(){var c=(document.querySelector('.chapter-content')||document.body).cloneNode(true);c.querySelectorAll('script,style,button,select,#tts-bar,.chapter-nav,.chapter-end,.site-footer').forEach(function(e){e.remove()});var t=(c.textContent||'').replace(/\s+/g,' ').trim();return t.length>50000?t.slice(0,50000):t;}
+function speak(){
+if(utt)window.speechSynthesis.cancel();
+utt=new SpeechSynthesisUtterance(getText());
+utt.lang='zh-CN';utt.rate=parseFloat(rateSelect.value);
+var v=window.speechSynthesis.getVoices(),zv=v.find(function(x){return x.lang.startsWith('zh')});
+if(zv)utt.voice=zv;
+utt.onstart=function(){playBtn.style.display='none';pauseBtn.style.display='inline-block';stopBtn.style.display='inline-block';};
+utt.onend=function(){playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';utt=null;};
+utt.onerror=function(){playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';};
+window.speechSynthesis.speak(utt);
+}
+playBtn.addEventListener('click',function(){if(paused&&utt){window.speechSynthesis.resume();paused=false;playBtn.style.display='none';pauseBtn.style.display='inline-block';return;}speak();});
+pauseBtn.addEventListener('click',function(){window.speechSynthesis.pause();paused=true;pauseBtn.style.display='none';playBtn.style.display='inline-block';playBtn.textContent='▶ 继续';});
+stopBtn.addEventListener('click',function(){window.speechSynthesis.cancel();utt=null;paused=false;playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';});
+bar.style.display='block';
+})();
+</script>
+
+</body>
+</html>

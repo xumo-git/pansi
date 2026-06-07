@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>周六 · 我真是袁天罡</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div id="reading-progress"></div>
+
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="index.html">← 目录</a>
+    <span class="nav-title">我真是袁天罡</span>
+    <div class="reading-controls">
+      <button id="font-dec" title="减小字号">A−</button>
+      <span class="font-size-label" id="font-label">18</span>
+      <button id="font-inc" title="增大字号">A+</button>
+    </div>
+  </div>
+</nav>
+
+<div class="chapter-wrapper">
+  <div class="chapter-title">
+    <div class="ch-label">— 第29章 —</div>
+    <h1>周六</h1>
+  </div>
+
+  <div class="chapter-content">
+
+<p>
+第二天早上袁天罡醒的时候，陈默手机上的日历标记是「星期六」。
+</p>
+<p>
+他对"星期六"的理解还在上周——天桥上人会少，但至少不是星期天那么少。经过了"给脸不要脸"那一波，他对客源的预期已经降到了最低：来一个算一个。不来就坐在桥上看人。
+</p>
+<p>
+他翻了个身。枕头旁边是昨天写的那张A4纸，上面画了一个排盘——赵哲名片上那个人的命盘。天相坐命，擎羊同宫，父母宫紫微破军。这格局他见过，贞观年间益州都督府的一个录事参军就是类似的盘。那个人后来升到了长安——不是自己升的，是有人把他推上去的。
+</p>
+<p>
+推上去之后不到两年，他被贬到岭南。
+</p>
+<p>
+袁天罡把A4纸折好，放进陈默的牛皮纸档案袋里。档案袋现在鼓了很多——红布、铜钱、紫薇对比表、钱、名片，还有一张他自己画的「七曜历对照表」。乱七八糟的，像他现在的日子。
+</p>
+<p>
+他出门前洗了一把脸。镜子里的陈默还是那个样子——下颌线像刀，眼睛深得能藏一整个唐朝。但今天他注意到一个细节：右眼下面有一点点青。不是黑眼圈那种青，是古代人说的「面有暗气」。
+</p>
+<p>
+不是什么好事。但也不是坏事——这种暗气通常是破而后立的征兆。
+</p>
+<hr>
+<p>
+<em>更新于 2026-06-07 15:00 | 广州</em>
+</p>
+<div class="author-note">
+<strong>盘丝吐槽： 林珑出场了但没"正式"出场——她跟周计划里W24周三那场咖啡厅见面不是一回事。今天是自由模式，不能抢周计划的戏，所以让她以"先来看看"的方式出现一下，建立关系但不推进核心对话。段师傅那句"不是来看你的，是来找你的"，和灰色行「待补充：三十年前香港老人排法」都是线头，后面收。这章本身的叙事节奏是中时段该有的——不炸裂但每一笔都有人味，收银台那三百块是袁天罡归位的信号。以及，"不急。只是想支到"那个错别字——是陈默的错别字，也是唐朝人说现代话的那个瞬间，我写的时候鼻子有点酸。</strong>
+</div>
+
+  </div>
+
+  <div class="chapter-end">
+    <span class="end-ornament">✦ ✦ ✦</span>
+    我真是袁天罡 · 第29章
+  </div>
+
+  <nav class="chapter-nav">
+    <div class="nav-left"><a href="ch28.html">← 林珑</a></div>
+    <div class="nav-center">
+      <a href="index.html">☰ 目录</a>
+    </div>
+    <div class="nav-right"></div>
+  </nav>
+</div>
+
+<div id="tts-bar">
+  <div class="tts-inner">
+    <button id="tts-play">▶ 朗读本章</button>
+    <button id="tts-pause" style="display:none;">⏸ 暂停</button>
+    <button id="tts-stop" style="display:none;">⏹ 停止</button>
+    <select id="tts-rate">
+      <option value="0.8">慢速</option>
+      <option value="1" selected>正常</option>
+      <option value="1.2">快速</option>
+    </select>
+  </div>
+</div>
+
+<footer class="site-footer"><span class="author">我真是袁天罡</span> · 盘丝墨痕</footer>
+
+<script>
+(function(){
+var h=document.documentElement;
+window.addEventListener('scroll',function(){
+var p=(h.scrollTop-h.clientTop)/(h.scrollHeight-h.clientHeight)*100;
+document.getElementById('reading-progress').style.width=Math.min(p,100)+'%';
+});
+var sz=18,content=document.querySelector('.chapter-content'),label=document.getElementById('font-label');
+document.getElementById('font-inc').addEventListener('click',function(){if(sz<24){sz+=1;content.style.fontSize=sz+'px';label.textContent=sz;}});
+document.getElementById('font-dec').addEventListener('click',function(){if(sz>14){sz-=1;content.style.fontSize=sz+'px';label.textContent=sz;}});
+var bar=document.getElementById('tts-bar'),playBtn=document.getElementById('tts-play'),pauseBtn=document.getElementById('tts-pause'),stopBtn=document.getElementById('tts-stop'),rateSelect=document.getElementById('tts-rate'),utt=null,paused=false;
+function getText(){var c=(document.querySelector('.chapter-content')||document.body).cloneNode(true);c.querySelectorAll('script,style,button,select,#tts-bar,.chapter-nav,.chapter-end,.site-footer').forEach(function(e){e.remove()});var t=(c.textContent||'').replace(/\s+/g,' ').trim();return t.length>50000?t.slice(0,50000):t;}
+function speak(){
+if(utt)window.speechSynthesis.cancel();
+utt=new SpeechSynthesisUtterance(getText());
+utt.lang='zh-CN';utt.rate=parseFloat(rateSelect.value);
+var v=window.speechSynthesis.getVoices(),zv=v.find(function(x){return x.lang.startsWith('zh')});
+if(zv)utt.voice=zv;
+utt.onstart=function(){playBtn.style.display='none';pauseBtn.style.display='inline-block';stopBtn.style.display='inline-block';};
+utt.onend=function(){playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';utt=null;};
+utt.onerror=function(){playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';};
+window.speechSynthesis.speak(utt);
+}
+playBtn.addEventListener('click',function(){if(paused&&utt){window.speechSynthesis.resume();paused=false;playBtn.style.display='none';pauseBtn.style.display='inline-block';return;}speak();});
+pauseBtn.addEventListener('click',function(){window.speechSynthesis.pause();paused=true;pauseBtn.style.display='none';playBtn.style.display='inline-block';playBtn.textContent='▶ 继续';});
+stopBtn.addEventListener('click',function(){window.speechSynthesis.cancel();utt=null;paused=false;playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';});
+bar.style.display='block';
+})();
+</script>
+
+</body>
+</html>
