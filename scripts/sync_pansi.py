@@ -13,7 +13,7 @@ import os, re, sys, subprocess
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-SOURCE = Path("/Volumes/Mac1T/盘丝洞")
+SOURCE = Path("/Volumes/Mac1T/盘丝")
 
 # ── 中文字符转换 ──
 CN_DIGITS = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"]

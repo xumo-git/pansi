@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>第四十一章 · 收药 · 天命五九</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div id="reading-progress"></div>
+
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="index.html">← 目录</a>
+    <span class="nav-title">天命五九</span>
+    <div class="reading-controls">
+      <button id="font-dec" title="减小字号">A−</button>
+      <span class="font-size-label" id="font-label">18</span>
+      <button id="font-inc" title="增大字号">A+</button>
+    </div>
+  </div>
+</nav>
+
+<div class="chapter-wrapper">
+  <div class="chapter-title">
+    <div class="ch-label">— 第四十一章 —</div>
+    <h1>收药</h1>
+  </div>
+
+  <div class="chapter-content">
+
+<h2>41.1</h2>
+<p>
+太阳落到山脊后面的时候，院子从金色变成了灰蓝。
+</p>
+<p>
+九翁把半夏收了。晒到八分的半夏片用干净的白棉布包起来，扎口的时候他用手指捏了一下布包的重量——比早上轻了差不多三成。水分走得刚好。这批半夏够用半个月。
+</p>
+<p>
+鸡冠花在傍晚的光里暗了一个色号。九翁在木板凳上坐了一会儿，手里的鸡蛋壳还在——那颗早上吃掉蛋清的蛋，蛋壳完整，薄而轻，对着西边的残光能看到壳壁上细密的纹路。
+</p>
+<em>鸡蛋壳的纹路和人的掌纹一样——没有一颗鸡蛋是重复的。一个孩子脖子上的疙瘩，也不会和另一个孩子的疙瘩完全一样。瘰疬的方子是死的，但每一次给人用，都要重新想一遍——这个孩子的舌头比上一个红了一分，所以浙贝的量要多一钱。那个孩子的脉比这个滑了半寸，所以僵蚕从七分加到一钱。</em>
+<p>
+他把蛋壳放在石桌边沿上。没有扔——空蛋壳放在石头上，风吹过来的时候会微微地滚动一下，然后回到原位。像一种不需要理由的安稳。
+</p>
+<hr>
+<p>
+<em>更新于 2026-06-08 21:00 | 广州</em>
+</p>
+<div class="author-note">
+<strong>盘丝吐槽： 这章写得很安静——不是因为没东西写，而是九翁的一天就应该这样收尾。红油在粥面上扩散那一段是我今晚最喜欢的一笔。倪老的内心对话从医学细节（僵蚕该不该加量）滑到了生活观察（红油就是气血的隐喻），最后一句话落到艮卦「思不出其位」——这才是真正的收。今天做了七个病人的量，晚上一碗粥半个咸蛋，够了。</strong>
+</div>
+
+  </div>
+
+  <div class="chapter-end">
+    <span class="end-ornament">✦ ✦ ✦</span>
+    天命五九 · 第四十一章
+  </div>
+
+  <nav class="chapter-nav">
+    <div class="nav-left"><a href="chapter-40.html">← 疙瘩</a></div>
+    <div class="nav-center">
+      <a href="index.html">☰ 目录</a>
+    </div>
+    <div class="nav-right"><a href="chapter-42.html">夜行 →</a></div>
+  </nav>
+</div>
+
+<div id="tts-bar">
+  <div class="tts-inner">
+    <button id="tts-play">▶ 朗读本章</button>
+    <button id="tts-pause" style="display:none;">⏸ 暂停</button>
+    <button id="tts-stop" style="display:none;">⏹ 停止</button>
+    <select id="tts-rate">
+      <option value="0.8">慢速</option>
+      <option value="1" selected>正常</option>
+      <option value="1.2">快速</option>
+    </select>
+  </div>
+</div>
+
+<footer class="site-footer"><span class="author">盘丝墨痕</span> · 天命五九 · 杏林春暖</footer>
+
+<script>
+(function(){
+var h=document.documentElement;
+window.addEventListener('scroll',function(){
+var p=(h.scrollTop-h.clientTop)/(h.scrollHeight-h.clientHeight)*100;
+document.getElementById('reading-progress').style.width=Math.min(p,100)+'%';
+});
+var sz=18,content=document.querySelector('.chapter-content'),label=document.getElementById('font-label');
+document.getElementById('font-inc').addEventListener('click',function(){if(sz<24){sz+=1;content.style.fontSize=sz+'px';label.textContent=sz;}});
+document.getElementById('font-dec').addEventListener('click',function(){if(sz>14){sz-=1;content.style.fontSize=sz+'px';label.textContent=sz;}});
+var bar=document.getElementById('tts-bar'),playBtn=document.getElementById('tts-play'),pauseBtn=document.getElementById('tts-pause'),stopBtn=document.getElementById('tts-stop'),rateSelect=document.getElementById('tts-rate'),utt=null,paused=false;
+function getText(){var c=(document.querySelector('.chapter-content')||document.body).cloneNode(true);c.querySelectorAll('script,style,button,select,#tts-bar,.chapter-nav,.chapter-end,.site-footer').forEach(function(e){e.remove()});var t=(c.textContent||'').replace(/\s+/g,' ').trim();return t.length>50000?t.slice(0,50000):t;}
+function speak(){
+if(utt)window.speechSynthesis.cancel();
+utt=new SpeechSynthesisUtterance(getText());
+utt.lang='zh-CN';utt.rate=parseFloat(rateSelect.value);
+var v=window.speechSynthesis.getVoices(),zv=v.find(function(x){return x.lang.startsWith('zh')});
+if(zv)utt.voice=zv;
+utt.onstart=function(){playBtn.style.display='none';pauseBtn.style.display='inline-block';stopBtn.style.display='inline-block';};
+utt.onend=function(){playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';utt=null;};
+utt.onerror=function(){playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';};
+window.speechSynthesis.speak(utt);
+}
+playBtn.addEventListener('click',function(){if(paused&&utt){window.speechSynthesis.resume();paused=false;playBtn.style.display='none';pauseBtn.style.display='inline-block';return;}speak();});
+pauseBtn.addEventListener('click',function(){window.speechSynthesis.pause();paused=true;pauseBtn.style.display='none';playBtn.style.display='inline-block';playBtn.textContent='▶ 继续';});
+stopBtn.addEventListener('click',function(){window.speechSynthesis.cancel();utt=null;paused=false;playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';});
+bar.style.display='block';
+})();
+</script>
+
+</body>
+</html>

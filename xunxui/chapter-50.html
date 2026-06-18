@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>传 · 驯蕊</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div id="reading-progress"></div>
+
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="index.html">← 目录</a>
+    <span class="nav-title">驯蕊</span>
+    <div class="reading-controls">
+      <button id="font-dec" title="减小字号">A−</button>
+      <span class="font-size-label" id="font-label">18</span>
+      <button id="font-inc" title="增大字号">A+</button>
+    </div>
+  </div>
+</nav>
+
+<div class="chapter-wrapper">
+  <div class="chapter-title">
+    <div class="ch-label">— 第50章 —</div>
+    <h1>传</h1>
+  </div>
+
+  <div class="chapter-content">
+
+
+<hr>
+<p>
+<em>更新于 2026-06-16 14:00 | 广州</em>
+</p>
+<div class="author-note">
+<strong>盘丝吐槽： 这一章写的是"传"——蕊第一次发现有些东西无法用语言传递。城璧问"要多久""怎么才算对"，她能回答，但回答的不是问题本身——是问题背后的那个东西。她想告诉他"做对"和"不动"的区别，但她张了张嘴，说不出来。因为"不动"不是知识，是经验。你的膝盖知道，你的大腿知道，你的脊柱知道——但你的嘴不知道。槐序从来不解释，他只是把东西放在你面前。蕊现在也在做同样的事：她不解释，她只是说"再来一组"。城璧最后问的那个问题——"你有没有跪到不想起来过"——她有答案。但她没有回答。不是不想回答，是这个问题的答案不是用语言给的。它要用身体给。另：城璧在第七分钟的时候呼吸忽然停了一下，然后他的节奏变了——从痉挛式的颤抖变成有节奏的起伏。这意味着他的身体在自己找节奏。这比"做对"重要得多。蕊看到了。她只点了一下头。城璧就继续了。</strong>
+</div>
+
+  </div>
+
+  <div class="chapter-end">
+    <span class="end-ornament">✦ ✦ ✦</span>
+    驯蕊 · 第50章
+  </div>
+
+  <nav class="chapter-nav">
+    <div class="nav-left"><a href="chapter-49.html">← 纸</a></div>
+    <div class="nav-center">
+      <a href="index.html">☰ 目录</a>
+    </div>
+    <div class="nav-right"><a href="chapter-51.html">冬泳 →</a></div>
+  </nav>
+</div>
+
+<div id="tts-bar">
+  <div class="tts-inner">
+    <button id="tts-play">▶ 朗读本章</button>
+    <button id="tts-pause" style="display:none;">⏸ 暂停</button>
+    <button id="tts-stop" style="display:none;">⏹ 停止</button>
+    <select id="tts-rate">
+      <option value="0.8">慢速</option>
+      <option value="1" selected>正常</option>
+      <option value="1.2">快速</option>
+    </select>
+  </div>
+</div>
+
+<footer class="site-footer"><span class="author">驯蕊</span> · 盘丝墨痕</footer>
+
+<script>
+(function(){
+var h=document.documentElement;
+window.addEventListener('scroll',function(){
+var p=(h.scrollTop-h.clientTop)/(h.scrollHeight-h.clientHeight)*100;
+document.getElementById('reading-progress').style.width=Math.min(p,100)+'%';
+});
+var sz=18,content=document.querySelector('.chapter-content'),label=document.getElementById('font-label');
+document.getElementById('font-inc').addEventListener('click',function(){if(sz<24){sz+=1;content.style.fontSize=sz+'px';label.textContent=sz;}});
+document.getElementById('font-dec').addEventListener('click',function(){if(sz>14){sz-=1;content.style.fontSize=sz+'px';label.textContent=sz;}});
+var bar=document.getElementById('tts-bar'),playBtn=document.getElementById('tts-play'),pauseBtn=document.getElementById('tts-pause'),stopBtn=document.getElementById('tts-stop'),rateSelect=document.getElementById('tts-rate'),utt=null,paused=false;
+function getText(){var c=(document.querySelector('.chapter-content')||document.body).cloneNode(true);c.querySelectorAll('script,style,button,select,#tts-bar,.chapter-nav,.chapter-end,.site-footer').forEach(function(e){e.remove()});var t=(c.textContent||'').replace(/\s+/g,' ').trim();return t.length>50000?t.slice(0,50000):t;}
+function speak(){
+if(utt)window.speechSynthesis.cancel();
+utt=new SpeechSynthesisUtterance(getText());
+utt.lang='zh-CN';utt.rate=parseFloat(rateSelect.value);
+var v=window.speechSynthesis.getVoices(),zv=v.find(function(x){return x.lang.startsWith('zh')});
+if(zv)utt.voice=zv;
+utt.onstart=function(){playBtn.style.display='none';pauseBtn.style.display='inline-block';stopBtn.style.display='inline-block';};
+utt.onend=function(){playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';utt=null;};
+utt.onerror=function(){playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';};
+window.speechSynthesis.speak(utt);
+}
+playBtn.addEventListener('click',function(){if(paused&&utt){window.speechSynthesis.resume();paused=false;playBtn.style.display='none';pauseBtn.style.display='inline-block';return;}speak();});
+pauseBtn.addEventListener('click',function(){window.speechSynthesis.pause();paused=true;pauseBtn.style.display='none';playBtn.style.display='inline-block';playBtn.textContent='▶ 继续';});
+stopBtn.addEventListener('click',function(){window.speechSynthesis.cancel();utt=null;paused=false;playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';});
+bar.style.display='block';
+})();
+</script>
+
+</body>
+</html>

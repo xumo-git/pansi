@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>第五十八章 · 火井 · 天命五九</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div id="reading-progress"></div>
+
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="index.html">← 目录</a>
+    <span class="nav-title">天命五九</span>
+    <div class="reading-controls">
+      <button id="font-dec" title="减小字号">A−</button>
+      <span class="font-size-label" id="font-label">18</span>
+      <button id="font-inc" title="增大字号">A+</button>
+    </div>
+  </div>
+</nav>
+
+<div class="chapter-wrapper">
+  <div class="chapter-title">
+    <div class="ch-label">— 第五十八章 —</div>
+    <h1>火井</h1>
+  </div>
+
+  <div class="chapter-content">
+
+<p>
+九翁没有睡着。
+</p>
+<p>
+他躺在老刘家西厢房的木板床上，眼睛睁着，看着头顶的房梁。房梁是老木头——黑色的，被烟熏了很多年，表面有一层油亮的光泽。月光从窗户缝里透进来，在房梁上画了一道细细的白线。
+</p>
+<p>
+他本来是睡着了的。但半夜的时候，远处有一声狗叫——不是那种警觉的叫，是那种无聊的、拉长了声音的叫——把他叫醒了。醒来之后就睡不着了。
+</p>
+<p>
+他翻了个身。
+</p>
+<p>
+枕头底下压着一本《伤寒论》。书脊已经磨得很软了，翻到任何一页都不会自己合上。他没有拿出来看。他不想看书。他想的是另一件事。
+</p>
+<p>
+火井。
+</p>
+<p>
+他想起了火井。
+</p>
+<hr>
+<p>
+<em>更新于 2026-06-16 21:00 | 广州</em>
+</p>
+<div class="author-note">
+<strong>盘丝吐槽： 九翁睡不着的时候想起了火井——四川的火井，八十年代的火井。几百号人在山沟里挖沟铺管子，九翁在帐篷里给人看感冒。那时候他不叫九翁，叫倪某，四十出头，走路快说话快。有个刘师傅来问他一个怪问题：「天然气从地底下冒出来，它知道吗？」三十多年后九翁才明白，刘师傅问的不是天然气——是人。人从地底下被挖出来放到山沟里，知道自己为什么在这里吗？这个问题没有答案。就像面包车的轮胎印被人踩乱了——你想还原原来的轨迹，但已经不可能了。九翁最后决定不想了。明天还有事。年轻人要来拣药，孙寡妇可能还要来，还有那个信封。他不是放弃了，是还没到时候。</strong>
+</div>
+
+  </div>
+
+  <div class="chapter-end">
+    <span class="end-ornament">✦ ✦ ✦</span>
+    天命五九 · 第五十八章
+  </div>
+
+  <nav class="chapter-nav">
+    <div class="nav-left"><a href="chapter-57.html">← 痕迹</a></div>
+    <div class="nav-center">
+      <a href="index.html">☰ 目录</a>
+    </div>
+    <div class="nav-right"><a href="chapter-59.html">不寐 →</a></div>
+  </nav>
+</div>
+
+<div id="tts-bar">
+  <div class="tts-inner">
+    <button id="tts-play">▶ 朗读本章</button>
+    <button id="tts-pause" style="display:none;">⏸ 暂停</button>
+    <button id="tts-stop" style="display:none;">⏹ 停止</button>
+    <select id="tts-rate">
+      <option value="0.8">慢速</option>
+      <option value="1" selected>正常</option>
+      <option value="1.2">快速</option>
+    </select>
+  </div>
+</div>
+
+<footer class="site-footer"><span class="author">盘丝墨痕</span> · 天命五九 · 杏林春暖</footer>
+
+<script>
+(function(){
+var h=document.documentElement;
+window.addEventListener('scroll',function(){
+var p=(h.scrollTop-h.clientTop)/(h.scrollHeight-h.clientHeight)*100;
+document.getElementById('reading-progress').style.width=Math.min(p,100)+'%';
+});
+var sz=18,content=document.querySelector('.chapter-content'),label=document.getElementById('font-label');
+document.getElementById('font-inc').addEventListener('click',function(){if(sz<24){sz+=1;content.style.fontSize=sz+'px';label.textContent=sz;}});
+document.getElementById('font-dec').addEventListener('click',function(){if(sz>14){sz-=1;content.style.fontSize=sz+'px';label.textContent=sz;}});
+var bar=document.getElementById('tts-bar'),playBtn=document.getElementById('tts-play'),pauseBtn=document.getElementById('tts-pause'),stopBtn=document.getElementById('tts-stop'),rateSelect=document.getElementById('tts-rate'),utt=null,paused=false;
+function getText(){var c=(document.querySelector('.chapter-content')||document.body).cloneNode(true);c.querySelectorAll('script,style,button,select,#tts-bar,.chapter-nav,.chapter-end,.site-footer').forEach(function(e){e.remove()});var t=(c.textContent||'').replace(/\s+/g,' ').trim();return t.length>50000?t.slice(0,50000):t;}
+function speak(){
+if(utt)window.speechSynthesis.cancel();
+utt=new SpeechSynthesisUtterance(getText());
+utt.lang='zh-CN';utt.rate=parseFloat(rateSelect.value);
+var v=window.speechSynthesis.getVoices(),zv=v.find(function(x){return x.lang.startsWith('zh')});
+if(zv)utt.voice=zv;
+utt.onstart=function(){playBtn.style.display='none';pauseBtn.style.display='inline-block';stopBtn.style.display='inline-block';};
+utt.onend=function(){playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';utt=null;};
+utt.onerror=function(){playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';};
+window.speechSynthesis.speak(utt);
+}
+playBtn.addEventListener('click',function(){if(paused&&utt){window.speechSynthesis.resume();paused=false;playBtn.style.display='none';pauseBtn.style.display='inline-block';return;}speak();});
+pauseBtn.addEventListener('click',function(){window.speechSynthesis.pause();paused=true;pauseBtn.style.display='none';playBtn.style.display='inline-block';playBtn.textContent='▶ 继续';});
+stopBtn.addEventListener('click',function(){window.speechSynthesis.cancel();utt=null;paused=false;playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';});
+bar.style.display='block';
+})();
+</script>
+
+</body>
+</html>

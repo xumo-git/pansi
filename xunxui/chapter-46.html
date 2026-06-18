@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>参数 · 驯蕊</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div id="reading-progress"></div>
+
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="index.html">← 目录</a>
+    <span class="nav-title">驯蕊</span>
+    <div class="reading-controls">
+      <button id="font-dec" title="减小字号">A−</button>
+      <span class="font-size-label" id="font-label">18</span>
+      <button id="font-inc" title="增大字号">A+</button>
+    </div>
+  </div>
+</nav>
+
+<div class="chapter-wrapper">
+  <div class="chapter-title">
+    <div class="ch-label">— 第46章 —</div>
+    <h1>参数</h1>
+  </div>
+
+  <div class="chapter-content">
+
+<p>
+周一早上的车间和平时没什么两样。
+</p>
+<p>
+蕊站在磨床控制面板前，屏幕上是一排排参数。砂轮转速、进给速率、修整量、冷却液流量——她把这些数字挨个过了一遍，手指点在下颌上，眼睛盯着屏幕上的曲线图。
+</p>
+<p>
+前一批次的工件表面粗糙度偏高，不是废品，但离规格上限太近。她不喜欢"接近上限"这个描述——要么在范围内，要么不在。接近是什么意思？接近就是下次可能会超。
+</p>
+<p>
+她把进给速率从0.025降到0.022，修整量往上调了一个微米。小数点后三位的调整，没人会注意到。但她会。
+</p>
+<p>
+车间里的噪音是恒定的——主轴旋转的低频嗡鸣、切削液的循环泵声、隔壁工位气动夹具的排气声。这些声音混在一起，变成了一层不会停的背景，待久了就不再进入意识了。就像你住在铁路旁边，一个月后你就听不见火车了。
+</p>
+<p>
+蕊从口袋掏出手机，看了一眼屏幕。没有通知。
+</p>
+<p>
+她把手机放回口袋，继续调下一组参数。
+</p>
+<hr>
+<p>
+<em>更新于 2026-06-15 09:35 | 广州</em>
+</p>
+<div class="author-note">
+<strong>盘丝吐槽： 这一章写的是"日常化"——那句话怎么说来着，爱情的最高境界是变成日常。蕊收到「下午来」回「好」这个过程，从45章末尾铺垫到这里终于实现。没有心跳加速的描写，没有脸红，没有犹豫——心跳多跳了一下然后立刻被参数曲线压下去了，这才是工业风的浪漫。上一章她意识到自己没有钥匙，这一章她意识到自己已经不紧张了。参数调好了，下午该去就去。另：槐序问"做了什么"那段，是我个人全章最喜欢的时刻——两人之间的交流已经进化到"不需要解释"阶段的表现：问的是日常，听的是参数。</strong>
+</div>
+
+  </div>
+
+  <div class="chapter-end">
+    <span class="end-ornament">✦ ✦ ✦</span>
+    驯蕊 · 第46章
+  </div>
+
+  <nav class="chapter-nav">
+    <div class="nav-left"><a href="chapter-45.html">← 汤</a></div>
+    <div class="nav-center">
+      <a href="index.html">☰ 目录</a>
+    </div>
+    <div class="nav-right"><a href="chapter-47.html">位 →</a></div>
+  </nav>
+</div>
+
+<div id="tts-bar">
+  <div class="tts-inner">
+    <button id="tts-play">▶ 朗读本章</button>
+    <button id="tts-pause" style="display:none;">⏸ 暂停</button>
+    <button id="tts-stop" style="display:none;">⏹ 停止</button>
+    <select id="tts-rate">
+      <option value="0.8">慢速</option>
+      <option value="1" selected>正常</option>
+      <option value="1.2">快速</option>
+    </select>
+  </div>
+</div>
+
+<footer class="site-footer"><span class="author">驯蕊</span> · 盘丝墨痕</footer>
+
+<script>
+(function(){
+var h=document.documentElement;
+window.addEventListener('scroll',function(){
+var p=(h.scrollTop-h.clientTop)/(h.scrollHeight-h.clientHeight)*100;
+document.getElementById('reading-progress').style.width=Math.min(p,100)+'%';
+});
+var sz=18,content=document.querySelector('.chapter-content'),label=document.getElementById('font-label');
+document.getElementById('font-inc').addEventListener('click',function(){if(sz<24){sz+=1;content.style.fontSize=sz+'px';label.textContent=sz;}});
+document.getElementById('font-dec').addEventListener('click',function(){if(sz>14){sz-=1;content.style.fontSize=sz+'px';label.textContent=sz;}});
+var bar=document.getElementById('tts-bar'),playBtn=document.getElementById('tts-play'),pauseBtn=document.getElementById('tts-pause'),stopBtn=document.getElementById('tts-stop'),rateSelect=document.getElementById('tts-rate'),utt=null,paused=false;
+function getText(){var c=(document.querySelector('.chapter-content')||document.body).cloneNode(true);c.querySelectorAll('script,style,button,select,#tts-bar,.chapter-nav,.chapter-end,.site-footer').forEach(function(e){e.remove()});var t=(c.textContent||'').replace(/\s+/g,' ').trim();return t.length>50000?t.slice(0,50000):t;}
+function speak(){
+if(utt)window.speechSynthesis.cancel();
+utt=new SpeechSynthesisUtterance(getText());
+utt.lang='zh-CN';utt.rate=parseFloat(rateSelect.value);
+var v=window.speechSynthesis.getVoices(),zv=v.find(function(x){return x.lang.startsWith('zh')});
+if(zv)utt.voice=zv;
+utt.onstart=function(){playBtn.style.display='none';pauseBtn.style.display='inline-block';stopBtn.style.display='inline-block';};
+utt.onend=function(){playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';utt=null;};
+utt.onerror=function(){playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';};
+window.speechSynthesis.speak(utt);
+}
+playBtn.addEventListener('click',function(){if(paused&&utt){window.speechSynthesis.resume();paused=false;playBtn.style.display='none';pauseBtn.style.display='inline-block';return;}speak();});
+pauseBtn.addEventListener('click',function(){window.speechSynthesis.pause();paused=true;pauseBtn.style.display='none';playBtn.style.display='inline-block';playBtn.textContent='▶ 继续';});
+stopBtn.addEventListener('click',function(){window.speechSynthesis.cancel();utt=null;paused=false;playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';});
+bar.style.display='block';
+})();
+</script>
+
+</body>
+</html>

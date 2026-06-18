@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>第三十九章 · 半夏 · 天命五九</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div id="reading-progress"></div>
+
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="index.html">← 目录</a>
+    <span class="nav-title">天命五九</span>
+    <div class="reading-controls">
+      <button id="font-dec" title="减小字号">A−</button>
+      <span class="font-size-label" id="font-label">18</span>
+      <button id="font-inc" title="增大字号">A+</button>
+    </div>
+  </div>
+</nav>
+
+<div class="chapter-wrapper">
+  <div class="chapter-title">
+    <div class="ch-label">— 第三十九章 —</div>
+    <h1>半夏</h1>
+  </div>
+
+  <div class="chapter-content">
+
+<h2>39.1</h2>
+<p>
+太阳翻过屋檐的时候，九翁把簸箕从屋檐下搬到了院子的石板上。
+</p>
+<p>
+簸箕里摊着昨天切好的半夏——块茎切成不规则的片，有些已经半干了，边缘卷起来，像一张张缩小的叶子。半夏这东西要晒到七分干才能收，太干药性跑，太湿会发霉。晒药靠眼力，手摸上去微微发凉——凉不是温度，是一种手感——就是正好的时候。
+</p>
+<p>
+九翁蹲在簸箕旁边，拿了一片在手心里翻了个面。晨光透过薄片，能看到里面的纹路——纵横交错的纤维结构像一张缩小的地图。
+</p>
+<em>半夏——辛温有毒。生半夏吃了锁喉，必须用姜炮。姜制之后毒性去了大半，剩下的微毒入药反而管用。降逆止呕、化痰散结。治的是气往上冲、痰往下积——一上一下，全是堵的东西。</em>
+<p>
+他把那片放回去，用指尖把簸箕里聚在一堆的半夏摊开。
+</p>
+<p>
+瓦房里传来挪凳子的声音。陈家老大醒了。
+</p>
+<hr>
+<p>
+<em>更新于 2026-06-08 11:00 | 广州</em>
+</p>
+<div class="author-note">
+<strong>盘丝吐槽： 九翁和倪老的内心对话越来越自然了。那个"病历记的是故事，不是真相"——我替九翁说了句大实话。陈大柱的八个鸡蛋比钱重——这不是酬劳，是信任。村里人给钱的时候是你给我服务，给鸡蛋的时候是"你是自己人"。</strong>
+</div>
+
+  </div>
+
+  <div class="chapter-end">
+    <span class="end-ornament">✦ ✦ ✦</span>
+    天命五九 · 第三十九章
+  </div>
+
+  <nav class="chapter-nav">
+    <div class="nav-left"><a href="chapter-38.html">← 鸡蛋</a></div>
+    <div class="nav-center">
+      <a href="index.html">☰ 目录</a>
+    </div>
+    <div class="nav-right"><a href="chapter-40.html">疙瘩 →</a></div>
+  </nav>
+</div>
+
+<div id="tts-bar">
+  <div class="tts-inner">
+    <button id="tts-play">▶ 朗读本章</button>
+    <button id="tts-pause" style="display:none;">⏸ 暂停</button>
+    <button id="tts-stop" style="display:none;">⏹ 停止</button>
+    <select id="tts-rate">
+      <option value="0.8">慢速</option>
+      <option value="1" selected>正常</option>
+      <option value="1.2">快速</option>
+    </select>
+  </div>
+</div>
+
+<footer class="site-footer"><span class="author">盘丝墨痕</span> · 天命五九 · 杏林春暖</footer>
+
+<script>
+(function(){
+var h=document.documentElement;
+window.addEventListener('scroll',function(){
+var p=(h.scrollTop-h.clientTop)/(h.scrollHeight-h.clientHeight)*100;
+document.getElementById('reading-progress').style.width=Math.min(p,100)+'%';
+});
+var sz=18,content=document.querySelector('.chapter-content'),label=document.getElementById('font-label');
+document.getElementById('font-inc').addEventListener('click',function(){if(sz<24){sz+=1;content.style.fontSize=sz+'px';label.textContent=sz;}});
+document.getElementById('font-dec').addEventListener('click',function(){if(sz>14){sz-=1;content.style.fontSize=sz+'px';label.textContent=sz;}});
+var bar=document.getElementById('tts-bar'),playBtn=document.getElementById('tts-play'),pauseBtn=document.getElementById('tts-pause'),stopBtn=document.getElementById('tts-stop'),rateSelect=document.getElementById('tts-rate'),utt=null,paused=false;
+function getText(){var c=(document.querySelector('.chapter-content')||document.body).cloneNode(true);c.querySelectorAll('script,style,button,select,#tts-bar,.chapter-nav,.chapter-end,.site-footer').forEach(function(e){e.remove()});var t=(c.textContent||'').replace(/\s+/g,' ').trim();return t.length>50000?t.slice(0,50000):t;}
+function speak(){
+if(utt)window.speechSynthesis.cancel();
+utt=new SpeechSynthesisUtterance(getText());
+utt.lang='zh-CN';utt.rate=parseFloat(rateSelect.value);
+var v=window.speechSynthesis.getVoices(),zv=v.find(function(x){return x.lang.startsWith('zh')});
+if(zv)utt.voice=zv;
+utt.onstart=function(){playBtn.style.display='none';pauseBtn.style.display='inline-block';stopBtn.style.display='inline-block';};
+utt.onend=function(){playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';utt=null;};
+utt.onerror=function(){playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';};
+window.speechSynthesis.speak(utt);
+}
+playBtn.addEventListener('click',function(){if(paused&&utt){window.speechSynthesis.resume();paused=false;playBtn.style.display='none';pauseBtn.style.display='inline-block';return;}speak();});
+pauseBtn.addEventListener('click',function(){window.speechSynthesis.pause();paused=true;pauseBtn.style.display='none';playBtn.style.display='inline-block';playBtn.textContent='▶ 继续';});
+stopBtn.addEventListener('click',function(){window.speechSynthesis.cancel();utt=null;paused=false;playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';});
+bar.style.display='block';
+})();
+</script>
+
+</body>
+</html>

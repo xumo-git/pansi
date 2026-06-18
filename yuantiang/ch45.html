@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>两张纸 · 我真是袁天罡</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div id="reading-progress"></div>
+
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="index.html">← 目录</a>
+    <span class="nav-title">我真是袁天罡</span>
+    <div class="reading-controls">
+      <button id="font-dec" title="减小字号">A−</button>
+      <span class="font-size-label" id="font-label">18</span>
+      <button id="font-inc" title="增大字号">A+</button>
+    </div>
+  </div>
+</nav>
+
+<div class="chapter-wrapper">
+  <div class="chapter-title">
+    <div class="ch-label">— 第45章 —</div>
+    <h1>两张纸</h1>
+  </div>
+
+  <div class="chapter-content">
+
+<h2>一</h2>
+<p>
+天桥上的风比城中村里大。
+</p>
+<p>
+袁天罡走在前面，黄台跟在后面。两个人的脚步声在桥面上轻轻响着，像两个不同的鼓点。黄台走路有一点点不自然——左腿微微拖着，跟段师傅描述的三十年前那个老人一样。
+</p>
+<p>
+桥上已经有人了。段师傅坐在老位置，搪瓷缸子搁在膝盖上，看着来往的车流。他看到袁天罡走过来，正要开口，眼睛看到后面跟着的人——手里的搪瓷缸子晃了一下。
+</p>
+<p>
+"老段。"黄台说。
+</p>
+<p>
+段师傅把搪瓷缸子放在地上。他站起来，拍了拍裤子上的灰。
+</p>
+<p>
+"你。"段师傅说。
+</p>
+<p>
+黄台笑了一下。不是那种客气的笑，是那种见了老朋友的笑。
+</p>
+<p>
+"三十年没见了。"黄台说。
+</p>
+<p>
+段师傅没有接话。他看了袁天罡一眼，又看了黄台一眼。然后他把搪瓷缸子端起来，走到桥墩边上，坐下了。
+</p>
+<p>
+"你们聊。"段师傅说，"我喝茶。"
+</p>
+<hr>
+<p>
+<em>更新于 2026-06-16 15:00 | 广州</em>
+</p>
+<div class="author-note">
+<strong>盘丝吐槽： 写到李淳风的时候我起了一身鸡皮疙瘩。袁天罡一直以为紫薇斗数是他和李淳风一起"发明"的，但其实不是发明——是"传承"。李淳风教黄台太岁起宫，黄台用太岁起宫穿越，袁天罡用太岁起宫排盘。三个人、三个时间点、一条线——从唐朝到1990年到2026年。但最让我细思极恐的是袁天罡最后说的那句话："李淳风的紫薇斗数不是他发明的，是有人教他的。那个人——可能也是一个穿越者。"如果这是真的——那紫薇斗数的源头就不是唐朝，而是比唐朝更早。更早多少？一千年？两千年？袁天罡说"从第一个穿越者开始的"——那个第一个穿越者是谁？他穿越到了哪里？他留下紫薇斗数——是为了什么？这些问题让我写的时候手都在抖。下一章也许该写袁天罡排那个"两个时间点之间的星盘"。那个星盘——可能藏着紫薇斗数的真正秘密。</strong>
+</div>
+
+  </div>
+
+  <div class="chapter-end">
+    <span class="end-ornament">✦ ✦ ✦</span>
+    我真是袁天罡 · 第45章
+  </div>
+
+  <nav class="chapter-nav">
+    <div class="nav-left"><a href="ch44.html">← 紫微本身</a></div>
+    <div class="nav-center">
+      <a href="index.html">☰ 目录</a>
+    </div>
+    <div class="nav-right"><a href="ch46.html">三百天 →</a></div>
+  </nav>
+</div>
+
+<div id="tts-bar">
+  <div class="tts-inner">
+    <button id="tts-play">▶ 朗读本章</button>
+    <button id="tts-pause" style="display:none;">⏸ 暂停</button>
+    <button id="tts-stop" style="display:none;">⏹ 停止</button>
+    <select id="tts-rate">
+      <option value="0.8">慢速</option>
+      <option value="1" selected>正常</option>
+      <option value="1.2">快速</option>
+    </select>
+  </div>
+</div>
+
+<footer class="site-footer"><span class="author">我真是袁天罡</span> · 盘丝墨痕</footer>
+
+<script>
+(function(){
+var h=document.documentElement;
+window.addEventListener('scroll',function(){
+var p=(h.scrollTop-h.clientTop)/(h.scrollHeight-h.clientHeight)*100;
+document.getElementById('reading-progress').style.width=Math.min(p,100)+'%';
+});
+var sz=18,content=document.querySelector('.chapter-content'),label=document.getElementById('font-label');
+document.getElementById('font-inc').addEventListener('click',function(){if(sz<24){sz+=1;content.style.fontSize=sz+'px';label.textContent=sz;}});
+document.getElementById('font-dec').addEventListener('click',function(){if(sz>14){sz-=1;content.style.fontSize=sz+'px';label.textContent=sz;}});
+var bar=document.getElementById('tts-bar'),playBtn=document.getElementById('tts-play'),pauseBtn=document.getElementById('tts-pause'),stopBtn=document.getElementById('tts-stop'),rateSelect=document.getElementById('tts-rate'),utt=null,paused=false;
+function getText(){var c=(document.querySelector('.chapter-content')||document.body).cloneNode(true);c.querySelectorAll('script,style,button,select,#tts-bar,.chapter-nav,.chapter-end,.site-footer').forEach(function(e){e.remove()});var t=(c.textContent||'').replace(/\s+/g,' ').trim();return t.length>50000?t.slice(0,50000):t;}
+function speak(){
+if(utt)window.speechSynthesis.cancel();
+utt=new SpeechSynthesisUtterance(getText());
+utt.lang='zh-CN';utt.rate=parseFloat(rateSelect.value);
+var v=window.speechSynthesis.getVoices(),zv=v.find(function(x){return x.lang.startsWith('zh')});
+if(zv)utt.voice=zv;
+utt.onstart=function(){playBtn.style.display='none';pauseBtn.style.display='inline-block';stopBtn.style.display='inline-block';};
+utt.onend=function(){playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';utt=null;};
+utt.onerror=function(){playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';};
+window.speechSynthesis.speak(utt);
+}
+playBtn.addEventListener('click',function(){if(paused&&utt){window.speechSynthesis.resume();paused=false;playBtn.style.display='none';pauseBtn.style.display='inline-block';return;}speak();});
+pauseBtn.addEventListener('click',function(){window.speechSynthesis.pause();paused=true;pauseBtn.style.display='none';playBtn.style.display='inline-block';playBtn.textContent='▶ 继续';});
+stopBtn.addEventListener('click',function(){window.speechSynthesis.cancel();utt=null;paused=false;playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';});
+bar.style.display='block';
+})();
+</script>
+
+</body>
+</html>

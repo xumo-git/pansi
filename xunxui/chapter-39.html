@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>问 · 驯蕊</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div id="reading-progress"></div>
+
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="index.html">← 目录</a>
+    <span class="nav-title">驯蕊</span>
+    <div class="reading-controls">
+      <button id="font-dec" title="减小字号">A−</button>
+      <span class="font-size-label" id="font-label">18</span>
+      <button id="font-inc" title="增大字号">A+</button>
+    </div>
+  </div>
+</nav>
+
+<div class="chapter-wrapper">
+  <div class="chapter-title">
+    <div class="ch-label">— 第39章 —</div>
+    <h1>问</h1>
+  </div>
+
+  <div class="chapter-content">
+
+<h2>39.1</h2>
+<p>
+周二早上，蕊在厂里。
+</p>
+<p>
+工位上的显示器亮着，PLC梯形图的逻辑块占满整个屏幕。她右手握着鼠标，左手搁在键盘边上。对面的技术员在讲什么——设备变频器的启动电流峰值偏高，需要重新设定斜坡时间——她听到了，也在记事本上记下了数字。但她脑子里有一层东西，像屏幕防窥膜一样覆盖在所有画面的最表层。
+</p>
+<p>
+城璧昨天说的那句「谢谢」。
+</p>
+<p>
+她不知道自己为什么一直想着这个。训练结束之后她关上门，靠在门后，手按在左膝上——那些感觉是身体的。但「谢谢」是往另一个方向去的。
+</p>
+<p>
+技术员停下来等她的回复。她说「斜坡时间调到二十秒，再测一组数据。」
+</p>
+<p>
+「二十秒会不会太长——」
+</p>
+<p>
+「先测。」
+</p>
+<p>
+技术员走了。蕊把椅子转回来，看着屏幕上的梯形图。L1常开触点，T0计时器，M0中间继电器。这些符号她写了十几年。闭着眼睛也能画出来。
+</p>
+<p>
+但她现在想的不是这些。她想的是一件完全不相干的事：城璧跪在那里的时候，没有看镜子——他在看地板和墙壁的距离。他量过那个距离。不是用尺子，是用身体。
+</p>
+<strong>这个人和我一样。</strong>
+<p>
+不是生活习惯一样。不是工作一样。是在某个她自己都说不清楚的地方——他们站在同一条线上。
+</p>
+<hr>
+<p>
+<em>更新于 2026-06-09 10:37 | 广州</em>
+</p>
+<div class="author-note">
+<strong>盘丝吐槽： 这章写得很意外——本来只想写「周二常规训练」，结果蕊的拷问欲自己冒出来了。她用对城璧的提问在找自己的答案，自己还不知道。城璧这个角色真能撑——两年前就该来、等了两年，说「不做会没」的时候我背脊一凉。最难的是那种安静：两个人都在一条路上，但不急。不急就是对的。别忘记后续阿茶线和城璧线该有交集了，侧间的门和厨房的门之间只隔一个客厅。今天就到这里——再写蕊就要哭了，而我不能让她哭在周二。</strong>
+</div>
+
+  </div>
+
+  <div class="chapter-end">
+    <span class="end-ornament">✦ ✦ ✦</span>
+    驯蕊 · 第39章
+  </div>
+
+  <nav class="chapter-nav">
+    <div class="nav-left"><a href="chapter-38.html">← 带</a></div>
+    <div class="nav-center">
+      <a href="index.html">☰ 目录</a>
+    </div>
+    <div class="nav-right"><a href="chapter-40.html">反刍 →</a></div>
+  </nav>
+</div>
+
+<div id="tts-bar">
+  <div class="tts-inner">
+    <button id="tts-play">▶ 朗读本章</button>
+    <button id="tts-pause" style="display:none;">⏸ 暂停</button>
+    <button id="tts-stop" style="display:none;">⏹ 停止</button>
+    <select id="tts-rate">
+      <option value="0.8">慢速</option>
+      <option value="1" selected>正常</option>
+      <option value="1.2">快速</option>
+    </select>
+  </div>
+</div>
+
+<footer class="site-footer"><span class="author">驯蕊</span> · 盘丝墨痕</footer>
+
+<script>
+(function(){
+var h=document.documentElement;
+window.addEventListener('scroll',function(){
+var p=(h.scrollTop-h.clientTop)/(h.scrollHeight-h.clientHeight)*100;
+document.getElementById('reading-progress').style.width=Math.min(p,100)+'%';
+});
+var sz=18,content=document.querySelector('.chapter-content'),label=document.getElementById('font-label');
+document.getElementById('font-inc').addEventListener('click',function(){if(sz<24){sz+=1;content.style.fontSize=sz+'px';label.textContent=sz;}});
+document.getElementById('font-dec').addEventListener('click',function(){if(sz>14){sz-=1;content.style.fontSize=sz+'px';label.textContent=sz;}});
+var bar=document.getElementById('tts-bar'),playBtn=document.getElementById('tts-play'),pauseBtn=document.getElementById('tts-pause'),stopBtn=document.getElementById('tts-stop'),rateSelect=document.getElementById('tts-rate'),utt=null,paused=false;
+function getText(){var c=(document.querySelector('.chapter-content')||document.body).cloneNode(true);c.querySelectorAll('script,style,button,select,#tts-bar,.chapter-nav,.chapter-end,.site-footer').forEach(function(e){e.remove()});var t=(c.textContent||'').replace(/\s+/g,' ').trim();return t.length>50000?t.slice(0,50000):t;}
+function speak(){
+if(utt)window.speechSynthesis.cancel();
+utt=new SpeechSynthesisUtterance(getText());
+utt.lang='zh-CN';utt.rate=parseFloat(rateSelect.value);
+var v=window.speechSynthesis.getVoices(),zv=v.find(function(x){return x.lang.startsWith('zh')});
+if(zv)utt.voice=zv;
+utt.onstart=function(){playBtn.style.display='none';pauseBtn.style.display='inline-block';stopBtn.style.display='inline-block';};
+utt.onend=function(){playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';utt=null;};
+utt.onerror=function(){playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';};
+window.speechSynthesis.speak(utt);
+}
+playBtn.addEventListener('click',function(){if(paused&&utt){window.speechSynthesis.resume();paused=false;playBtn.style.display='none';pauseBtn.style.display='inline-block';return;}speak();});
+pauseBtn.addEventListener('click',function(){window.speechSynthesis.pause();paused=true;pauseBtn.style.display='none';playBtn.style.display='inline-block';playBtn.textContent='▶ 继续';});
+stopBtn.addEventListener('click',function(){window.speechSynthesis.cancel();utt=null;paused=false;playBtn.style.display='inline-block';playBtn.textContent='▶ 朗读本章';pauseBtn.style.display='none';stopBtn.style.display='none';});
+bar.style.display='block';
+})();
+</script>
+
+</body>
+</html>
